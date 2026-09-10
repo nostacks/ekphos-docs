@@ -6,7 +6,7 @@ import { Features } from "@/components/features";
 import { Install } from "@/components/install";
 import { getRepoInfo, GITHUB_URL } from "@/lib/github";
 
-const SITE = "https://ekphos.xyz";
+const SITE = "https://ekphos.nostacks.xyz";
 const TITLE = "ekphos - a markdown research tool for your terminal";
 const DESCRIPTION =
   "A lightweight, fast, terminal-based markdown research tool written in Rust.";

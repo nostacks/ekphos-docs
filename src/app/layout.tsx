@@ -14,7 +14,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://ekphos.xyz'),
+  metadataBase: new URL('https://ekphos.nostacks.xyz'),
   title: {
     default: 'ekphos',
     template: '%s | ekphos',
