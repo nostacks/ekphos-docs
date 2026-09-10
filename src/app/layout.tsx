@@ -39,6 +39,11 @@ export default function Layout({ children }: { children: ReactNode }) {
             defaultTheme: 'dark',
             themes: ['light', 'dark'],
           }}
+          search={{
+            options: {
+              type: 'static',
+            },
+          }}
         >
           {children}
         </RootProvider>

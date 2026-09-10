@@ -11,6 +11,17 @@ npm install
 npm run dev
 ```
 
+## Deployment
+
+The site is exported as static files and served by Cloudflare Workers static assets. `workers_dev` is disabled in `wrangler.jsonc`, so the Worker needs a custom domain or route attached in the Cloudflare dashboard.
+
+```bash
+npm run preview
+npm run deploy
+```
+
+The release version on the landing page is fetched from GitHub at build time. Set `GITHUB_TOKEN` in the build environment to avoid API rate limits.
+
 ## Assets
 
 The logo lives in `src/components/logo.tsx`. Favicons and the OG image are generated from it:

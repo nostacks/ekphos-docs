@@ -12,15 +12,16 @@ const FALLBACK: RepoInfo = {
   version: null,
 };
 
+function headers(): HeadersInit {
+  const token = process.env.GITHUB_TOKEN;
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 export async function getRepoInfo(): Promise<RepoInfo> {
   try {
     const [repoRes, releaseRes] = await Promise.all([
-      fetch(`https://api.github.com/repos/${REPO}`, {
-        next: { revalidate: 1800 },
-      }),
-      fetch(`https://api.github.com/repos/${REPO}/releases/latest`, {
-        next: { revalidate: 1800 },
-      }),
+      fetch(`https://api.github.com/repos/${REPO}`, { headers: headers() }),
+      fetch(`https://api.github.com/repos/${REPO}/releases/latest`, { headers: headers() }),
     ]);
 
     const repo = repoRes.ok ? await repoRes.json() : null;
