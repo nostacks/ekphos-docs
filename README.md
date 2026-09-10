@@ -1,6 +1,6 @@
 # ekphos-docs
 
-Website for [ekphos](https://github.com/hanebox/ekphos), a lightweight, fast, terminal-based markdown research tool built with Rust.
+Website for [ekphos](https://github.com/nostacks/ekphos), a lightweight, fast, terminal-based markdown research tool built with Rust.
 
 The landing page is served at `/` and the documentation at `/docs`.
 
@@ -10,6 +10,16 @@ The landing page is served at `/` and the documentation at `/docs`.
 npm install
 npm run dev
 ```
+
+## Assets
+
+The logo lives in `src/components/logo.tsx`. Favicons and the OG image are generated from it:
+
+```bash
+npm run assets
+```
+
+This needs Bun and Google Chrome installed and writes to `public/`.
 
 ## Contributing
 

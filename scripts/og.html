@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face {
+    font-family: "Geist Mono";
+    src: url("../public/fonts/GeistMono-Regular.woff2") format("woff2");
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: "Geist Mono";
+    src: url("../public/fonts/GeistMono-Medium.woff2") format("woff2");
+    font-weight: 500;
+  }
+  html, body { margin: 0; }
+  body {
+    width: 1200px;
+    height: 630px;
+    background: #121212;
+    color: #ffffff;
+    font-family: "Geist Mono", monospace;
+    font-variant-ligatures: none;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  main {
+    box-sizing: border-box;
+    width: 1200px;
+    height: 630px;
+    padding: 96px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .logo { width: 96px; height: 96px; color: #7aa2f7; }
+  h1 { margin: 40px 0 0; font-size: 64px; font-weight: 500; line-height: 1.1; }
+  p { margin: 20px 0 0; font-size: 28px; color: #8a8a8a; }
+  .strip {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: max-content;
+    border: 1px solid #545454;
+    padding: 14px 20px;
+    font-size: 24px;
+    color: #8a8a8a;
+  }
+  .strip b { font-weight: 500; color: #ededed; }
+  .cursor { display: inline-block; width: 14px; height: 28px; background: #3d6ad6; }
+  .noise {
+    position: fixed; inset: 0; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+</style>
+</head>
+<body>
+<main>
+  <div>
+    <svg class="logo" viewBox="0 0 256 256" shape-rendering="crispEdges" aria-hidden="true">
+      <path d="__LOGO_PATH__" fill="currentColor"/>
+    </svg>
+    <h1>ekphos</h1>
+    <p>a markdown research tool for your terminal</p>
+  </div>
+  <div class="strip"><span>$</span><b>cargo install ekphos</b><span class="cursor"></span></div>
+</main>
+<div class="noise"></div>
+</body>
+</html>

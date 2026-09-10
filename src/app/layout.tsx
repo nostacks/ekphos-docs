@@ -1,34 +1,38 @@
 import { RootProvider } from 'fumadocs-ui/provider/next';
 import './global.css';
-import { JetBrains_Mono } from 'next/font/google';
+import localFont from 'next/font/local';
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
+const geistMono = localFont({
+  src: [
+    { path: '../../public/fonts/GeistMono-Regular.woff2', weight: '400', style: 'normal' },
+    { path: '../../public/fonts/GeistMono-Medium.woff2', weight: '500', style: 'normal' },
+  ],
+  variable: '--font-geist-mono',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://ekphos.xyz'),
   title: {
-    default: 'Ekphos',
-    template: '%s | Ekphos',
+    default: 'ekphos',
+    template: '%s | ekphos',
   },
   description:
-    'An open source, lightweight, fast, terminal-based markdown research tool written in Rust.',
+    'A lightweight, fast, terminal-based markdown research tool written in Rust.',
   icons: {
-    icon: '/favicon.png',
+    icon: [
+      { url: '/favicon.ico', sizes: '48x48' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/apple-touch-icon.png',
   },
 };
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={jetbrainsMono.variable}
-      suppressHydrationWarning
-    >
+    <html lang="en" className={geistMono.variable} suppressHydrationWarning>
       <body className="flex min-h-screen flex-col font-mono">
         <RootProvider
           theme={{

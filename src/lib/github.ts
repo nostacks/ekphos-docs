@@ -1,4 +1,4 @@
-const REPO = 'hanebox/ekphos';
+const REPO = 'nostacks/ekphos';
 
 export const GITHUB_URL = `https://github.com/${REPO}`;
 

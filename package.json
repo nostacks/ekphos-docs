@@ -8,13 +8,13 @@
     "start": "next start",
     "types:check": "fumadocs-mdx && next typegen && tsc --noEmit",
     "postinstall": "fumadocs-mdx",
-    "lint": "eslint"
+    "lint": "eslint",
+    "assets": "bun scripts/assets.ts"
   },
   "dependencies": {
     "fumadocs-core": "16.15.4",
     "fumadocs-mdx": "15.4.0",
     "fumadocs-ui": "16.15.4",
-    "lucide-react": "^1.35.0",
     "mermaid": "^11.17.2",
     "next": "16.3.3",
     "react": "^19.2.8",
@@ -29,6 +29,7 @@
     "eslint": "^9.39.2",
     "eslint-config-next": "16.3.3",
     "postcss": "^8.5.6",
+    "sharp": "^0.35.4",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3"
   }
