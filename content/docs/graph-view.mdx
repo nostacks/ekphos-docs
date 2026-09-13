@@ -5,7 +5,7 @@ description: Visualize connections between your notes with wiki links
 
 import { Callout } from "fumadocs-ui/components/callout";
 
-The Graph View provides a visual representation of your notes and their connections through wiki links. Press `Ctrl+g` to open the graph.
+The Graph View provides a visual map of the wiki-link connections in your vault. By default, press `Ctrl+g` to open a fast **Local graph** centered on the active note, then switch to the complete vault when you need the wider picture. The opening shortcut is configurable as [`open_graph`](/docs/configuration#keybindings).
 
 ![Graph View](/ekphos-graph-view.png)
 
@@ -13,39 +13,73 @@ The Graph View provides a visual representation of your notes and their connecti
 
 The graph displays:
 
-- **Nodes**: Each note in your vault appears as a small square with its title below
-- **Edges**: Dotted lines connecting notes that link to each other via `[[wiki links]]`
-- **Selection highlighting**: When a node is selected, its connected edges are highlighted
+- **Nodes**: Notes rendered as distinct circular marks at wide distances and compact boxes up close
+- **Directed edges**: Connected box-drawing traces with endpoint markers for
+  outgoing, incoming, and bidirectional `[[wiki links]]`
+- **Focused traces**: The selected note, its direct connections, and their endpoints share a stable highlight
+- **Adaptive labels**: Titles appear only when the visible graph is sparse enough to remain legible
+- **Live context**: The status rows show the selected note, path, link counts, active mode, and zoom
 
 <Callout>
-  The graph uses a force-directed layout that automatically positions notes
-  based on their link relationships, with connected notes pulled closer together.
+  Graph controls are immediate and keyboard-first. Use `Enter` to open the
+  focused note, or `Space` to make it the new Local graph root without leaving
+  the graph.
 </Callout>
 
-## Navigation
+## Local and Global Views
 
-| Key       | Action                 |
-| --------- | ---------------------- |
-| `h` / `l` | Select node left/right |
-| `j` / `k` | Select node down/up    |
-| `g`       | Select first node      |
-| `G`       | Select last node       |
-| `u`       | Unselect current node  |
-| `Enter`   | Open selected note     |
-| `Esc`     | Close graph view       |
+The graph opens in **Local** mode, which keeps exploration focused and fast. Incoming notes form a radial fan to the left, outgoing notes fan to the right, and bidirectional or neutral relationships use their own tidy rings around the root.
 
-## Panning & Zoom
+| Key         | Action                                      |
+| ----------- | ------------------------------------------- |
+| `v` / `Tab` | Switch between Local and Global             |
+| `[` / `]`   | Decrease/increase Local depth from 1 to 5   |
+| `d`         | Cycle all, incoming, and outgoing links     |
+| `Space`     | Make the focused node the new Local root    |
+| `o`         | Toggle orphan notes in Global mode          |
+| `r`         | Reset depth, direction, filter, and orphans |
+
+**Global** mode maps the whole vault. Notes are seeded into stable folder-based angular sectors, hubs sit closer to the center, and force refinement improves spacing without collapsing the graph into a line.
+
+## Filtering
+
+Press `/` to filter the graph by title, path, or `#tag`. Results update as you type.
 
 | Key       | Action                         |
 | --------- | ------------------------------ |
-| `H`       | Pan left                       |
-| `J`       | Pan down                       |
-| `K`       | Pan up                         |
-| `L`       | Pan right                      |
-| `+` / `=` | Zoom in                        |
-| `-`       | Zoom out                       |
-| `f`       | Fit graph to screen            |
-| `0`       | Reset zoom to 100%             |
+| `/`       | Edit the graph filter          |
+| `Enter`   | Apply the filter while editing |
+| `Esc`     | Cancel filter editing          |
+| `n` / `N` | Next/previous matching node    |
+
+## Navigation
+
+| Key                    | Action                                  |
+| ---------------------- | --------------------------------------- |
+| `h` / `j` / `k` / `l` | Focus the nearest spatial neighbor      |
+| Arrow keys             | Focus the nearest spatial neighbor      |
+| `g` / `G`              | Focus the first/last node               |
+| `u`                    | Clear the current focus                 |
+| `Enter`                | Open the focused note                   |
+| `?`                    | Show the complete graph control overlay |
+| `Esc` / `q`            | Close Graph View                        |
+
+`Enter` navigates by note identity, so nested notes open correctly even when their folders are collapsed in the sidebar.
+
+## Panning & Zoom
+
+| Key       | Action                                   |
+| --------- | ---------------------------------------- |
+| `H`       | Pan left                                 |
+| `J`       | Pan down                                 |
+| `K`       | Pan up                                   |
+| `L`       | Pan right                                |
+| `+` / `=` | Zoom in                                  |
+| `-`       | Zoom out                                 |
+| `f`       | Fit the complete graph in the viewport   |
+| `0`       | Reset toward 100% within zoom boundaries |
+
+Zoom is deliberately bounded. The maximum is `2.5×`; the minimum is calculated from the current graph so the complete layout remains inside the viewport at maximum zoom-out.
 
 ## Moving Nodes
 
@@ -60,26 +94,41 @@ You can manually reposition nodes to customize your graph layout:
 
 ## Mouse Controls
 
-| Action          | Result          |
-| --------------- | --------------- |
-| Click node      | Select the node |
-| Drag node       | Move the node   |
-| Drag background | Pan the view    |
-| Scroll up       | Zoom in         |
-| Scroll down     | Zoom out        |
+| Action            | Result                |
+| ----------------- | --------------------- |
+| Click node        | Focus the node        |
+| Double-click node | Open the focused note |
+| Drag node         | Move the node         |
+| Drag background   | Pan the view          |
+| Scroll up         | Zoom in               |
+| Scroll down       | Zoom out              |
 
 ## Understanding the Layout
 
-The graph uses a force-directed algorithm that:
+Ekphos combines deterministic radial seeding with force refinement:
 
-1. **Attracts linked notes**: Notes connected by wiki links are pulled closer together
-2. **Repels overlapping nodes**: Nodes push away from each other to avoid overlap
-3. **Balances the layout**: The algorithm finds an equilibrium where forces are balanced
+1. **Stable semantic seeds** keep Local directions and Global folder groups understandable
+2. **Link springs** pull related notes together
+3. **Barnes-Hut repulsion** separates large graphs efficiently
+4. **Home anchors and aspect correction** retain a tidy, circular terminal-friendly shape
 
-The layout calculates when you open the graph view and automatically fits to screen. Manual node movements will push nearby nodes away to prevent overlap.
+Global refinement runs in the background and cached positions are reused when the vault has not changed. Old or stale layout results are discarded safely.
+
+## Large Vault Rendering
+
+Graph View is designed to stay coherent with thousands of notes and tens of thousands of links:
+
+- The vault graph index is built in linear `O(notes + links)` time off the UI thread
+- Far views merge nodes that occupy the same terminal cell and keep them circular
+- Edge drawing uses deterministic budgets and viewport clipping, so distant links cannot consume unbounded work
+- Focused traces are painted above ordinary edges and keep their endpoint nodes highlighted
+- Overview and compact modes render nodes without inline text
+- Detailed mode adds a small collision-safe label budget only when the visible region has enough space
 
 ## Tips
 
 - Use wiki links (`[[note name]]`) to create connections between notes
 - The graph helps identify orphan notes (no connections) and hub notes (many connections)
-- Press `Enter` on any node to quickly jump to that note
+- Use Local mode for focused exploration and Global mode for vault-wide patterns
+- The focused note's full title and path remain visible in the top status row even when inline labels are hidden
+- Press `Enter` on any focused node to jump directly to that note

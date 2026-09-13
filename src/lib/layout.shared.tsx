@@ -19,12 +19,6 @@ export async function baseOptions(): Promise<BaseLayoutProps> {
         </div>
       ),
     },
-    links: [
-      {
-        text: 'Docs',
-        url: '/docs',
-      },
-    ],
     githubUrl: GITHUB_URL,
   };
 }

@@ -1,0 +1,125 @@
+---
+title: Projects (Bases)
+description: Build live project tables from note properties with Obsidian-compatible Base files
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+Projects turn the properties in your Markdown notes into live, filtered views.
+They use `.base` files and the Obsidian Bases data model, so the definition stays
+portable instead of being locked to a generated table.
+
+## Create a project
+
+Create a file such as `Projects.base` anywhere in your vault. The following
+example finds project notes, calculates a score, groups them by status, and
+sorts the highest score first:
+
+```yaml
+filters:
+  and:
+    - 'file.hasTag("project")'
+    - 'status != "archived"'
+
+formulas:
+  weightedScore: 'score * priority'
+  dueStatus: 'if(due < today(), "Overdue", "Upcoming")'
+
+properties:
+  file.name:
+    displayName: Project
+  formula.weightedScore:
+    displayName: Weighted score
+
+views:
+  - type: table
+    name: Delivery overview
+    order:
+      - file.name
+      - owner
+      - status
+      - priority
+      - due
+      - formula.dueStatus
+      - formula.weightedScore
+    sort:
+      - property: formula.weightedScore
+        direction: DESC
+    groupBy:
+      property: status
+      direction: ASC
+    summaries:
+      formula.weightedScore: Sum
+```
+
+The values come from YAML frontmatter in your Markdown notes:
+
+```yaml
+---
+tags: [project]
+owner: Ada
+status: active
+priority: 3
+score: 8
+due: 2026-09-14
+---
+```
+
+## Project definition
+
+| Field        | Purpose                                                    |
+| ------------ | ---------------------------------------------------------- |
+| `filters`    | Include notes that match one expression or an `and`/`or`/`not` tree |
+| `formulas`   | Calculate reusable values from note and file properties    |
+| `properties` | Set display names and other property presentation metadata |
+| `views`      | Define one or more table or card queries                   |
+| `order`      | Choose the visible properties and their order              |
+| `sort`       | Sort rows by one or more properties                        |
+| `groupBy`    | Group matching rows under a property value                 |
+| `summaries`  | Calculate a footer value for a property                    |
+| `limit`      | Limit the number of rows in a view                         |
+
+Expressions support property lookup, comparisons, Boolean logic, arithmetic,
+date arithmetic, nested properties, and functions such as `if()`, `today()`,
+and `file.hasTag()`.
+
+<Callout>
+  Ekphos preserves and displays each view's `type`, including Obsidian's
+  `cards` value. The current terminal renderer presents every result as a
+  row-and-column table.
+</Callout>
+
+<Callout>
+  Projects evaluate away from the UI thread. When frontmatter or vault files
+  change, the active project refreshes without turning the `.base` definition
+  into Markdown.
+</Callout>
+
+## Navigate a project
+
+| Key or action          | Result                                  |
+| ---------------------- | --------------------------------------- |
+| `↑` / `↓`              | Select the previous or next result      |
+| `Page Up` / `Page Down`| Move ten results                        |
+| `Enter`                | Open the selected note                  |
+| `←` / `→`              | Show the previous or next column        |
+| `[` / `]`              | Switch between project views            |
+| Click a row            | Select that result                      |
+| Click `◀` / `▶`        | Show the previous or next hidden column |
+| Scroll                 | Move through the results                |
+| `e`                    | Edit the `.base` source                 |
+
+## Hidden columns
+
+Wide projects keep each column readable instead of squeezing every value into
+the terminal. A `◀` gutter appears at the leading edge when columns are hidden
+before the current window. A `▶` gutter appears at the trailing edge when more
+columns follow it. The gutters remain next to the clipped content and are
+clickable, so you do not have to infer whether the visible columns are the
+beginning or end of the project.
+
+## Diagnostics
+
+Invalid filters, formulas, and unsupported values appear as diagnostics in the
+project footer. Press `e` to correct the YAML source. A malformed project does
+not affect the Markdown notes it queries.

@@ -17,14 +17,25 @@ Configuration is stored at `~/.config/ekphos/config.toml`. A default config is c
       <File name="ekphos-dawn.toml" />
       <File name="my-theme.toml" />
     </Folder>
+    <Folder name="templates">
+      <File name="default.yaml" />
+      <File name="project.yaml" />
+    </Folder>
   </Folder>
 </Files>
+
+Ekphos creates the `templates` directory on startup. The template files shown
+above are examples; add the files you want to use.
 
 ## Main Settings
 
 ```toml title="config.toml"
+[general]
 # Directory where notes are stored
 notes_dir = "~/Documents/ekphos"
+
+# Vault-relative folder for journals; entries are grouped by year
+journal_dir = "Journal"
 
 # Show welcome dialog on startup
 welcome_shown = true
@@ -32,11 +43,24 @@ welcome_shown = true
 # Theme name (without .toml extension)
 theme = "ekphos-dawn"
 
-# Show folders with no .md files
+# Show folders with no supported Markdown, Base, or Canvas files
 show_empty_dir = true
 
 # Syntax highlighting theme for code blocks
 syntax_theme = "base16-ocean.dark"
+
+# Standalone and inline image heights in terminal rows
+image_height = 8
+inline_image_height = 4
+
+# Display equation height in terminal rows
+latex_height = 8
+
+# Sidebar width as a percentage of the terminal
+sidebar_width_percent = 20
+
+# Outline width as a percentage of the terminal
+outline_width_percent = 20
 
 # Start with sidebar collapsed
 sidebar_collapsed = false
@@ -61,25 +85,173 @@ transparent_bg = false
 
 # Start in floating cursor mode in the content view
 floating_cursor = false
+
+# Interface style: "outlined" draws borders around panels, "flat" uses
+# background tints and an accent bar instead
+style = "outlined"
 ```
 
 ### Options Reference
 
-| Option               | Type   | Default              | Description                           |
-| -------------------- | ------ | -------------------- | ------------------------------------- |
-| `notes_dir`          | string | `~/Documents/ekphos` | Notes storage directory               |
-| `welcome_shown`      | bool   | `true`               | Show welcome on startup               |
-| `theme`              | string | `ekphos-dawn`        | Theme name                            |
-| `show_empty_dir`     | bool   | `true`               | Show empty folders                    |
-| `syntax_theme`       | string | `base16-ocean.dark`  | Code highlighting theme               |
-| `sidebar_collapsed`  | bool   | `false`              | Start with sidebar collapsed          |
-| `outline_collapsed`  | bool   | `false`              | Start with outline collapsed          |
-| `folders_first`      | bool   | `true`               | Group folders at top of sidebar       |
-| `frontmatter_hidden` | bool   | `true`               | Hide YAML frontmatter in content view |
-| `show_tags`          | bool   | `true`               | Show tag badges from frontmatter      |
-| `check_updates`      | bool   | `true`               | Check for updates on startup          |
-| `transparent_bg`     | bool   | `false`              | Enable transparent background         |
-| `floating_cursor`    | bool   | `false`              | Start in floating cursor mode         |
+| Option                    | Type    | Default              | Description                           |
+| ------------------------- | ------- | -------------------- | ------------------------------------- |
+| `notes_dir`               | string  | `~/Documents/ekphos` | Notes storage directory               |
+| `journal_dir`             | string  | `Journal`            | Vault-relative journal folder         |
+| `welcome_shown`           | bool    | `true`               | Show welcome on startup               |
+| `theme`                   | string  | `ekphos-dawn`        | Theme name                            |
+| `show_empty_dir`          | bool    | `true`               | Show empty folders                    |
+| `syntax_theme`            | string  | `base16-ocean.dark`  | Code highlighting theme               |
+| `image_height`            | integer | `8`                  | Standalone image height in rows       |
+| `inline_image_height`     | integer | `4`                  | Inline thumbnail height in rows       |
+| `latex_height`            | integer | `8`                  | Display equation height in rows       |
+| `sidebar_width_percent`   | integer | `20`                 | Sidebar width percentage              |
+| `outline_width_percent`   | integer | `20`                 | Outline width percentage              |
+| `sidebar_collapsed`       | bool    | `false`              | Start with sidebar collapsed          |
+| `outline_collapsed`       | bool    | `false`              | Start with outline collapsed          |
+| `folders_first`           | bool    | `true`               | Group folders at top of sidebar       |
+| `frontmatter_hidden`      | bool    | `true`               | Hide YAML frontmatter in content view |
+| `show_tags`               | bool    | `true`               | Show tag badges from frontmatter      |
+| `check_updates`           | bool    | `true`               | Check for updates on startup          |
+| `transparent_bg`          | bool    | `false`              | Enable transparent background         |
+| `floating_cursor`         | bool    | `false`              | Start in floating cursor mode         |
+| `style`                   | string  | `outlined`           | Interface style: `outlined` or `flat` |
+| `frontmatter_templates`   | table   | empty                 | Map vault folders to YAML templates   |
+
+New configuration files keep these options under `[general]`. Older files with
+root-level options continue to load while `[general]` is absent. When you
+migrate manually, move all general options into the table together; root-level
+general options are not merged into an existing `[general]` table.
+
+### Journal Folder
+
+`journal_dir` is relative to the vault and defaults to `Journal`. Ekphos creates
+each entry in a year subfolder:
+
+```text
+Journal/2026/journal.2026-09-13.md
+```
+
+Nested values such as `Personal/Daily Notes` are supported. The value must be a
+non-empty relative path inside the vault; absolute paths and `.` or `..` path
+components are rejected. See the [Journal guide](/docs/journal#file-location-and-naming) for
+legacy-entry behavior and the dated note format.
+
+### Panel Sizing
+
+The sidebar and outline widths are configured independently as percentages of
+the terminal:
+
+```toml title="config.toml"
+[general]
+sidebar_width_percent = 25
+outline_width_percent = 15
+```
+
+Ekphos clamps the effective value of each setting to `5`–`95`. The center
+content panel still keeps a minimum width of 20 columns, so it takes precedence
+when the terminal is too narrow to satisfy all three requested widths. A side
+panel configured below `10%` uses its minimized five-column view; grow it to at
+least `10%` with `>` to restore the full panel.
+
+In the preview, focus the sidebar or outline and resize it in five-percentage-
+point steps:
+
+| Key | Action                   |
+| --- | ------------------------ |
+| `<` | Shrink the focused panel |
+| `>` | Grow the focused panel   |
+
+Keyboard resizing applies immediately and writes the new value to `config.toml`,
+so it persists after restart. Manual config edits take effect after
+`Ctrl+Shift+R`. Resizing is unavailable while the content panel is focused, in
+zen mode, or when the focused side panel is collapsed.
+
+### Image Height
+
+Use `image_height` for standalone previews and `inline_image_height` for inline
+image thumbnails. Both values are terminal rows:
+
+```toml title="config.toml"
+[general]
+image_height = 8
+inline_image_height = 4
+```
+
+An inline image group always begins on a dedicated preview row below that
+source line's text. Images written on the same Markdown source line flow
+horizontally within the group and wrap only when they reach the content
+boundary. A source newline intentionally starts a new image group. Use `]` and
+`[` to select each thumbnail; the selected image gets its own **Open ↗**
+highlight.
+
+The defaults are `8` for standalone images and `4` for inline thumbnails.
+Because previews have top and bottom borders, configured values below `3` are
+treated as `3`, preserving at least one drawable image row. After editing the
+config, press `Ctrl+Shift+R` to apply the new heights without restarting ekphos.
+
+### LaTeX Height
+
+Use `latex_height` to set the target height of display equations in terminal
+rows:
+
+```toml title="config.toml"
+[general]
+latex_height = 8
+```
+
+The default is `8`. Values below `3` are treated as `3`. Wide equations may
+render shorter so they can preserve their aspect ratio within the content
+panel. Inline equations stay on one terminal row and do not use this setting.
+
+Press `Ctrl+Shift+R` after editing the config to apply the new height without
+restarting Ekphos. Read the [LaTeX math guide](/docs/latex) for equation syntax,
+terminal requirements, and fallback behavior.
+
+### Interface Style
+
+`style` picks how the sidebar, content, outline, and editor panels are drawn:
+
+```toml title="config.toml"
+[general]
+style = "flat"
+```
+
+| Value      | Look                                                                                                          |
+| ---------- | ------------------------------------------------------------------------------------------------------------- |
+| `outlined` | Default. Every panel has a border. The focused panel's border uses the accent color.                          |
+| `flat`     | No panel borders. Side panels get a tinted background, and the focused panel shows a vertical accent bar on its left edge with its title in the accent color. |
+
+The full-screen graph view and task view follow the style as well: in `flat`
+they drop their frame and keep only the title row. Modals, popups, image
+frames, and canvas nodes keep their borders in both styles. In `flat` style the
+sidebar search box becomes a single tinted row, and `transparent_bg = true`
+leaves the content panel untinted while the side panels keep their surface
+color.
+
+The easiest way to switch is the [theme selector](/docs/themes#theme-selector):
+press `Ctrl+t`, then `←` / `→` to flip between `outlined` and `flat` with a live
+preview, and `Enter` to save both the theme and the style. Editing the file by
+hand and pressing `Ctrl+Shift+R` works too. The surface colors used by `flat`
+style come from the [`[ui.flat]` theme section](/docs/themes#flat-style).
+
+### Frontmatter Template Mappings
+
+Map vault-relative folders to YAML files under
+`~/.config/ekphos/templates/`:
+
+```toml title="config.toml"
+[frontmatter_templates]
+"." = "default.yaml"
+"Projects" = "project.yaml"
+"Projects/Clients" = "client.yaml"
+```
+
+The closest mapped parent folder wins, and `.` is the optional vault-root
+fallback. Reload `config.toml` with `Ctrl+Shift+R` after changing mappings.
+Template file edits apply to the next note without a reload.
+
+Read the [frontmatter template guide](/docs/frontmatter#frontmatter-templates)
+for the template format, variables, matching rules, and error behavior.
 
 ### Updating ekphos
 
@@ -101,10 +273,113 @@ yay -S ekphos
   Releases](https://github.com/nostacks/ekphos/releases).
 </Callout>
 
+## Keybindings
+
+Commands in the reference below can be remapped in a `[keybindings]` table.
+Each value is an array because a command can have multiple bindings:
+
+```toml title="config.toml"
+[keybindings]
+# Avoid a terminal-multiplexer collision with the default Ctrl+G
+open_graph = ["alt+g"]
+
+# Keep the default and add a secondary binding
+open_quick_search = ["ctrl+k", "ctrl+p"]
+
+# Change an editor-only shortcut
+insert_task = ["ctrl+shift+enter"]
+
+# An empty array disables a command
+show_help = []
+```
+
+Adding an entry replaces that command's complete default list. Commands omitted
+from the table keep their defaults. Reload valid edits with `Ctrl+Shift+R`; the
+help dialog and shortcut labels update to show the active bindings.
+
+Bindings are one or more whitespace-separated chords, such as `g g` or
+`z shift+m`. Chords support single characters, arrows, `enter`, `esc`, `tab`,
+`space`, `backspace`, `delete`, `home`, `end`, `pageup`, `pagedown`, `f1`–`f24`,
+and the modifiers `ctrl`, `alt`/`option`, `shift`, and
+`super`/`cmd`/`command`. Use the name `plus` for the `+` key. Named keys and
+modifier spellings are case-insensitive; character case remains meaningful.
+
+<Callout type="warn">
+  Ekphos rejects the entire custom keymap if a binding is invalid, assigned to
+  two commands in the same input context, or is an ambiguous prefix such as `g`
+  alongside `g g`. A persistent warning lists the conflicting binding and both
+  command IDs. At startup the defaults remain active; during reload the previous
+  valid keymap remains active. Fix every listed issue, dismiss with Enter or Esc,
+  then reload.
+</Callout>
+
+### Command Reference
+
+Most commands apply to the main preview view. `toggle_editor_mode` works in the
+preview and editor, while `insert_task` and `toggle_editor_fold` are active only
+while editing. Editor-mode-specific controls and controls inside dialogs,
+search inputs, and Graph View remain fixed.
+
+| Command | Default bindings | Context |
+| ------- | ---------------- | ------- |
+| `quit` | `q` | Global |
+| `focus_next` | `Tab`, `l`, `Right` | Outside zen mode |
+| `focus_previous` | `Shift+Tab`, `h`, `Left` | Outside zen mode |
+| `move_down` | `Down`, `j` | Current panel |
+| `move_up` | `Up`, `k` | Current panel |
+| `go_first` | `g g` | Current panel |
+| `go_last` | `Shift+G` | Current panel |
+| `activate` | `Enter` | Current selection |
+| `show_help` | `?` | Global |
+| `reload_files` | `Shift+R` | Global |
+| `reload_config` | `Ctrl+Shift+R` | Global |
+| `open_quick_search` | `Ctrl+K` | Global |
+| `find_in_buffer` | `Ctrl+F` | Global |
+| `open_graph` | `Ctrl+G` | Global |
+| `open_task_view` | `Ctrl+Y` | Global |
+| `open_theme_selector` | `Ctrl+T` | Global |
+| `open_journal` | `t` | Outside zen mode |
+| `history_back` | `-` | Content or Outline |
+| `history_forward` | `=` | Content or Outline |
+| `toggle_sidebar` | `Ctrl+B` | Global |
+| `toggle_outline` | `Ctrl+O` | Global |
+| `shrink_panel` | `<` | Focused side panel |
+| `grow_panel` | `>` | Focused side panel |
+| `toggle_zen` | `Ctrl+Z` | Global |
+| `open_selected` | `o` | Content or Outline |
+| `content_action` | `Space` | Content |
+| `next_target` | `]` | Content |
+| `previous_target` | `[` | Content |
+| `toggle_floating_cursor` | `Shift+J`, `Shift+K` | Content |
+| `half_page_down` | `Ctrl+D` | Content |
+| `half_page_up` | `Ctrl+U` | Content |
+| `toggle_frontmatter` | `Ctrl+M` | Content |
+| `toggle_fold` | `z a` | Content |
+| `fold_all` | `z Shift+M` | Content |
+| `unfold_all` | `z Shift+R` | Content |
+| `edit_note` | `e` | Global |
+| `create_note` | `n` | Outside zen mode |
+| `create_folder` | `Shift+N` | Outside zen mode |
+| `delete_item` | `d` | Outside zen mode |
+| `rename_item` | `r` | Outside zen mode |
+| `cut_item` | `x` | Sidebar |
+| `paste_item` | `p` | Sidebar with a cut item |
+| `cancel_cut` | `Esc` | Sidebar with a cut item |
+| `sidebar_search` | `/` | Sidebar |
+| `cycle_sort` | `s` | Sidebar |
+| `toggle_editor_mode` | `F6` | Preview and editor |
+| `insert_task` | `Ctrl+L` | Make a plain, unordered-list, or checklist line a task |
+| `toggle_editor_fold` | `Tab` | Editor: H1-H3 heading |
+
+See the [keybindings reference](/docs/keybindings) for what each command does.
+
 ## Editor Settings
 
 ```toml title="config.toml"
 [editor]
+# Editing behavior: "standard" or "vim"
+mode = "standard"
+
 # Enable soft line wrapping
 line_wrap = true
 
@@ -124,14 +399,26 @@ line_numbers = "absolute"
 scrolloff = 8
 ```
 
-| Option          | Type   | Default      | Description                      |
-| --------------- | ------ | ------------ | -------------------------------- |
-| `line_wrap`     | bool   | `true`       | Soft line wrapping               |
-| `tab_width`     | u16    | `4`          | Tab display width                |
-| `left_padding`  | u16    | `0`          | Left editor padding              |
-| `right_padding` | u16    | `1`          | Right editor padding             |
-| `line_numbers`  | string | `"absolute"` | Line number display mode         |
-| `scrolloff`     | u8     | `0`          | Minimum lines above/below cursor |
+| Option          | Type   | Default      | Description                         |
+| --------------- | ------ | ------------ | ----------------------------------- |
+| `mode`          | string | `"standard"` | Editing behavior: Standard or Vim   |
+| `line_wrap`     | bool   | `true`       | Soft line wrapping                  |
+| `tab_width`     | u16    | `4`          | Tab display width                   |
+| `left_padding`  | u16    | `0`          | Left editor padding                 |
+| `right_padding` | u16    | `1`          | Right editor padding                |
+| `line_numbers`  | string | `"absolute"` | Line number display mode            |
+| `scrolloff`     | u8     | `0`          | Minimum lines above/below cursor    |
+
+### Editing Modes
+
+New installations use `mode = "standard"`, with direct typing, arrow-key
+movement, Shift-selection, and familiar clipboard shortcuts. Set
+`mode = "vim"` for modal editing. Press `F6` in the preview or editor to switch
+immediately; Ekphos saves the preference to `config.toml`.
+
+Existing configurations without an explicit `mode` keep Vim behavior for
+compatibility. See the [keyboard reference](/docs/keybindings#standard-editing)
+for Standard controls and the complete Vim reference.
 
 ### Line Number Modes
 
@@ -174,6 +461,7 @@ Available themes for code block highlighting:
 - `Solarized (light)`
 
 ```toml
+[general]
 syntax_theme = "base16-mocha.dark"
 ```
 
@@ -183,6 +471,8 @@ syntax_theme = "base16-mocha.dark"
 # Open a specific folder or file
 ekphos ~/notes
 ekphos ~/notes/todo.md
+ekphos ~/notes/projects.base
+ekphos ~/notes/research.canvas
 
 # Reset configuration to defaults
 ekphos --reset
@@ -191,14 +481,16 @@ ekphos --reset
 ekphos --clean-cache
 ```
 
-| Option          | Description                                         |
-| --------------- | --------------------------------------------------- |
-| `-h, --help`    | Print help information                              |
-| `-v, --version` | Print version information                           |
-| `-c, --config`  | Print config file path                              |
-| `-d, --dir`     | Print notes directory path                          |
-| `--reset`       | Reset config and themes to defaults                 |
-| `--clean-cache` | Clear the search index, last note, and images cache |
+| Option          | Description                                      |
+| --------------- | ------------------------------------------------ |
+| `-h, --help`    | Print help information                           |
+| `-v, --version` | Print version information                        |
+| `-c, --config`  | Print config file path                           |
+| `-d, --dir`     | Print notes directory path                       |
+| `--reset`       | Reset config and themes to defaults              |
+| `--clean-cache` | Clear search, graph, image, and last-note caches |
+
+Positional file paths can point to Markdown, `.base`, or `.canvas` files.
 
 <Callout type="warn">
   Use `ekphos --reset` after major updates if you experience issues. This resets
@@ -208,11 +500,18 @@ ekphos --clean-cache
 ## Example Configuration
 
 ```toml title="config.toml"
+[general]
 notes_dir = "~/Documents/notes"
+journal_dir = "Journal"
 welcome_shown = false
 theme = "ekphos-dawn"
 show_empty_dir = false
 syntax_theme = "base16-mocha.dark"
+image_height = 8
+inline_image_height = 4
+latex_height = 8
+sidebar_width_percent = 20
+outline_width_percent = 20
 sidebar_collapsed = false
 outline_collapsed = false
 folders_first = true
@@ -221,16 +520,25 @@ show_tags = true
 check_updates = true
 transparent_bg = false
 floating_cursor = false
+style = "outlined"
 
 [editor]
+mode = "standard"
 line_wrap = true
 tab_width = 2
 left_padding = 1
 right_padding = 1
 line_numbers = "hybrid"
 scrolloff = 8
+
+[frontmatter_templates]
+"." = "default.yaml"
+"Projects" = "project.yaml"
 ```
 
 ## Reload Configuration
 
 Press `Ctrl+Shift+R` to reload config and theme without restarting ekphos.
+Panel widths changed with `<` or `>` apply live and are saved immediately, so
+they do not need a reload. Frontmatter template files are also read at note
+creation time, but changes to their folder mappings require a reload.

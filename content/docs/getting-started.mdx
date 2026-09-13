@@ -108,8 +108,11 @@ Don't have Rust? Run `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs 
   <Step>
     ### Start editing
 
-    Press `e` to enter edit mode. Use vim keybindings to write your note.
-    Press `Ctrl+s` to save.
+    Press `e` to enter edit mode. New installations use Standard editing, so
+    you can type immediately and press `Ctrl+s` to save without leaving the
+    editor. Press `Esc` to return to the preview.
+
+    Prefer modal editing? Press `F6` to switch to Vim and save that preference.
   </Step>
 </Steps>
 
@@ -125,7 +128,16 @@ Ekphos has a three-panel layout:
 
 Use `Tab` to switch focus between panels.
 
+To adjust the layout, focus the sidebar or outline and press `<` to shrink it or
+`>` to grow it. Changes happen in five-percentage-point steps and persist across
+restarts. You can also set independent
+`sidebar_width_percent` and `outline_width_percent` values in the
+[configuration](/docs/configuration#panel-sizing).
+
 ## Essential Keybindings
+
+These are the defaults. Main Normal-view commands can be changed in the
+[`[keybindings]` configuration table](/docs/configuration#keybindings).
 
 | Key | Action |
 |-----|--------|
@@ -137,17 +149,24 @@ Use `Tab` to switch focus between panels.
 | `/` | Search notes (sidebar) |
 | `Ctrl+k` | Quick open (files & content search) |
 | `Ctrl+f` | Find in buffer |
+| `Ctrl+g` | Open graph view |
+| `Ctrl+y` | Open task view |
 | `Ctrl+z` | Toggle zen mode |
+| `F6` | Switch between Standard and Vim editing |
 | `?` | Help |
 | `q` | Quit |
 
 <Callout>
-Press `?` at any time to see the full keybindings reference.
+Press `?` in the preview or `F1` while editing to see the full keybindings
+reference.
 </Callout>
 
 ## Configuration
 
 Ekphos stores configuration at `~/.config/ekphos/config.toml`. Notes are stored in `~/Documents/ekphos` by default.
+
+You can also [apply frontmatter templates by folder](/docs/frontmatter#frontmatter-templates)
+when creating regular notes.
 
 <Callout type="warn">
 After major updates, run `ekphos --reset` to reset configuration if you encounter issues.
@@ -156,8 +175,12 @@ After major updates, run `ekphos --reset` to reset configuration if you encounte
 ## Next Steps
 
 - Learn all [keybindings](/docs/keybindings)
+- Review [what changed after 0.25.10](/docs/whats-new)
 - Start a daily [journal](/docs/journal) with a single keystroke
 - Master [search](/docs/search) with instant full-text indexing
+- Build live tables with [Projects](/docs/projects)
+- Arrange connected notes on a [Canvas](/docs/canvas)
 - Customize your [configuration](/docs/configuration)
+- Automate note metadata with [frontmatter templates](/docs/frontmatter#frontmatter-templates)
 - Explore [markdown features](/docs/markdown)
 - Create custom [themes](/docs/themes)

@@ -9,19 +9,20 @@ Themes are TOML files stored in `~/.config/ekphos/themes/`. ekphos ships with th
 
 ## Theme Selector
 
-Press `Ctrl+t` to open the theme selector — an interactive modal that lists every available theme. As you move the selection, the **entire interface updates instantly**, so you can preview each theme live before committing to it.
+By default, press `Ctrl+t` to open the theme selector — an interactive modal that lists every available theme, with a style switch at the top for the `outlined` and `flat` [interface styles](/docs/configuration#interface-style). The opening shortcut is configurable as [`open_theme_selector`](/docs/configuration#keybindings). As you move the selection or flip the style, the **entire interface updates instantly**, so you can preview each combination live before committing to it.
 
-| Key                    | Action                                |
-| ---------------------- | ------------------------------------- |
-| `↑` / `↓` or `k` / `j` | Move selection (live preview)         |
-| `Ctrl+n` / `Ctrl+p`    | Move selection (live preview)         |
-| `Enter`                | Apply and save the selected theme     |
-| `Esc`                  | Cancel and restore the previous theme |
+| Key                    | Action                                        |
+| ---------------------- | --------------------------------------------- |
+| `↑` / `↓` or `k` / `j` | Move theme selection (live preview)           |
+| `Ctrl+n` / `Ctrl+p`    | Move theme selection (live preview)           |
+| `←` / `→` or `h` / `l` | Switch between outlined and flat style        |
+| `Enter`                | Apply and save the selected theme and style   |
+| `Esc`                  | Cancel and restore the previous theme and style |
 
-Official themes bundled with ekphos are listed first and tagged `official`; any custom themes you've added to `~/.config/ekphos/themes/` follow, tagged `custom`. Confirming with `Enter` writes the choice to `theme` in your [config](/docs/configuration), so it persists across restarts.
+Official themes bundled with ekphos are listed first and tagged `official`; any custom themes you've added to `~/.config/ekphos/themes/` follow, tagged `custom`. Confirming with `Enter` writes the choices to `theme` and `style` in your [config](/docs/configuration), so they persist across restarts.
 
 <Callout>
-Nothing is saved until you press `Enter`. Press `Esc` at any point to revert to the theme you started with.
+Nothing is saved until you press `Enter`. Press `Esc` at any point to revert to the theme and style you started with.
 </Callout>
 
 ## Using a Theme
@@ -29,6 +30,7 @@ Nothing is saved until you press `Enter`. Press `Esc` at any point to revert to 
 You can also set the theme manually in your config:
 
 ```toml title="config.toml"
+[general]
 theme = "ekphos-dawn"
 ```
 
@@ -62,7 +64,7 @@ selection = "#283457"
 cursor = "#c0caf5"
 ```
 
-Then set `theme = "my-theme"` in your config.
+Then set `theme = "my-theme"` under `[general]` in your config.
 
 ## Color Sections
 
@@ -225,6 +227,29 @@ italic = "#7dcfff"
 | `bold` | Bold text (**text**) |
 | `italic` | Italic text (*text*) |
 
+### Flat Style
+
+Surfaces used when [`style = "flat"`](/docs/configuration#interface-style) is
+set. They have no effect in the default outlined style.
+
+```toml
+[ui.flat]
+surface = "#24243a"
+surface_raised = "#2e2e48"
+content_bg = "#1a1a24"
+```
+
+| Color | Usage |
+|-------|-------|
+| `surface` | Sidebar and outline background |
+| `surface_raised` | Sidebar search input |
+| `content_bg` | Content and editor panel background (skipped when `transparent_bg` is on) |
+
+When the section is missing, `surface` falls back to `background_secondary`,
+`surface_raised` to a slightly lighter `surface`, and `content_bg` to
+`ui.content.background`. Keep `surface` different from `selection`, otherwise
+the highlighted sidebar row becomes invisible in flat style.
+
 <Callout>
 Component sections are optional. Missing values fall back to base colors, then to ekphos-dawn defaults.
 </Callout>
@@ -276,6 +301,11 @@ code = "#9ece6a"
 link = "#7dcfff"
 bold = "#e0af68"
 italic = "#7dcfff"
+
+[ui.flat]
+surface = "#24283b"
+surface_raised = "#2e3247"
+content_bg = "#1a1b26"
 ```
 
 ## Reset Themes

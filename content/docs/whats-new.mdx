@@ -1,0 +1,117 @@
+---
+title: What's New After 0.25.10
+description: Features, compatibility changes, and fixes added on main after version 0.25.10
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+This page tracks the work on Ekphos `main` after the `v0.25.10` tag, through
+September 12, 2026.
+
+<Callout type="warn">
+  These changes are newer than the `v0.25.10` release. Until a newer version is
+  published, build Ekphos from `main` to use them.
+</Callout>
+
+## Editing and Commands
+
+- **Standard editing** is the default for new installations. It supports direct
+  typing, Shift-selection, familiar clipboard and history shortcuts, and
+  in-place saving. Vim remains available, and `F6` switches modes and saves the
+  choice. Existing configurations without an explicit mode continue to use Vim.
+- **Remappable app commands** live under `[keybindings]`. A command can have
+  multiple bindings, be disabled with an empty array, and appear with its active
+  binding in the interface and help dialog.
+- **Heading folding while editing** is available for H1-H3 sections. `Tab`
+  toggles the current heading and still indents ordinary lines; Vim also supports
+  `za`, `zM`, and `zR`.
+- **Task insertion** with `Ctrl+l` converts the current plain, list, or checklist
+  line into a managed `#task` item as one undoable edit.
+- **Complete in-app help** now lists every configurable app command and supports
+  line, page, start, and end navigation.
+
+Read the [keyboard reference](/docs/keybindings) and
+[configuration guide](/docs/configuration#keybindings) for the complete command
+list.
+
+## New Views and Content
+
+- **Task View** collects `#task` checkboxes across the vault and filters them by
+  status, due date, priority, or text. Plain checklists remain interactive but
+  stay out of Task View.
+- **Projects (Bases)** turn note properties into live filtered, calculated,
+  sorted, grouped, and summarized views stored in `.base` files.
+- **Canvas** reads and writes JSON Canvas files, with spatial navigation, inline
+  card editing, move and resize controls, connection editing, and undo/redo.
+- **LaTeX math** renders `$...$` inline expressions and `$$...$$` display blocks
+  in compatible terminals, with readable source fallback elsewhere.
+- **Frontmatter templates** apply folder-aware YAML fragments and the
+  `{{title}}`, `{{date}}`, and `{{folder}}` variables when creating notes.
+
+See [Task Management](/docs/task-management), [Projects](/docs/projects),
+[Canvas](/docs/canvas), [LaTeX Math](/docs/latex), and
+[Frontmatter](/docs/frontmatter#frontmatter-templates).
+
+## Graph, Layout, and Appearance
+
+- Graph View now opens as a fast Local graph for the active note and can switch
+  to a vault-wide Global graph. It adds depth and direction controls, filtering,
+  orphan visibility, connected box-drawing traces, background layout, cached
+  positions, adaptive labels, and large-vault rendering budgets.
+- The sidebar and outline have independent percentage widths. Focus either side
+  panel and press `<` or `>` to resize it in five-point steps and save the value.
+- Image preview heights are configurable separately for standalone images and
+  inline thumbnails. Multiple inline images flow across a dedicated preview row.
+- The new flat interface style removes main-panel borders and uses theme-defined
+  surfaces and a focused accent bar. The theme selector previews both theme and
+  style before saving.
+
+Read [Graph View](/docs/graph-view),
+[panel sizing](/docs/configuration#panel-sizing),
+[image height](/docs/configuration#image-height), and
+[interface style](/docs/configuration#interface-style).
+
+## Journals, Paths, and Platforms
+
+- Journals now default to `Journal/<year>/journal.<date>.md`. A custom
+  `journal_dir` can point to another vault-relative folder. A same-day legacy
+  journal at the vault root still opens in place.
+- Local image destinations support CommonMark angle brackets and percent-encoded
+  spaces. Relative images resolve from the current note.
+- Wrapped prose, wide characters, panel padding, and checkboxes now use the same
+  coordinate mapping for rendering and mouse hit testing.
+- External links and images can use `xdg-open` on FreeBSD in addition to Linux
+  and Android. macOS and Windows keep their native system openers.
+
+Read [Journal](/docs/journal) and [Markdown images](/docs/markdown#images).
+
+## Configuration and Performance
+
+New configuration files group application settings under `[general]`. Root-level
+settings from older files remain supported while that table is absent; if you
+migrate manually, move the full set of general options together. The new
+options are:
+
+| Section | Option | Default |
+| ------- | ------ | ------- |
+| `[general]` | `journal_dir` | `"Journal"` |
+| `[general]` | `image_height` | `8` |
+| `[general]` | `inline_image_height` | `4` |
+| `[general]` | `latex_height` | `8` |
+| `[general]` | `sidebar_width_percent` | `20` |
+| `[general]` | `outline_width_percent` | `20` |
+| `[general]` | `style` | `"outlined"` |
+| `[editor]` | `mode` | `"standard"` for new configurations |
+| `[keybindings]` | Command arrays | Built-in defaults |
+| `[frontmatter_templates]` | Folder-to-template mappings | Empty |
+
+The internals were also split into focused workspace crates. Vault startup now
+catalogs metadata first and loads note bodies when needed. Search updates its
+persistent index from file fingerprints, graph work runs away from the UI
+thread, and image and syntax work use bounded background services. These changes
+reduce startup work and retained memory without changing the Markdown note
+format.
+
+Building the current source requires Rust 1.90 or newer. Run `ekphos --clean-cache`
+after upgrading if you need to rebuild search, graph, and image caches from
+scratch.

@@ -13,7 +13,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
     <img src="https://img.shields.io/crates/v/ekphos" alt="Version" />
   </a>
   <a href="https://github.com/nostacks/ekphos" target="_blank" rel="noopener noreferrer">
-    <img src="https://img.shields.io/badge/rust-1.70%2B-orange" alt="Rust" />
+    <img src="https://img.shields.io/badge/rust-1.90%2B-orange" alt="Rust 1.90 or newer" />
   </a>
   <a href="https://github.com/nostacks/ekphos/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/crates/l/ekphos" alt="License" />
@@ -29,13 +29,18 @@ Ekphos is in early development. Always update to the latest version with `cargo 
 ## Features
 
 - **Three-panel layout** - Sidebar, content view, and outline navigation
-- **Vim keybindings** - Full vim-style navigation and editing
+- **Standard and Vim editing** - Type directly or use full modal editing; switch with `F6`
 - **Wiki links** - Obsidian-style `[[note]]` linking with autocomplete
-- **Graph view** - Visualize note connections with interactive graph (`Ctrl+g`)
+- **Graph view** - Explore fast Local and vault-wide Global note maps (`Ctrl+g`)
+- **Task management** - Collect `#task` checkboxes in one filterable list with due dates and priorities (`Ctrl+y`)
+- **Projects** - Query frontmatter into live property views with `.base` files
+- **Canvas** - Arrange and connect editable cards in JSON Canvas files
 - **Syntax highlighting** - 50+ languages supported in code blocks
 - **Inline images** - Preview images in compatible terminals
+- **LaTeX math** - Render inline and display equations in the content preview
 - **Fast search** - Fuzzy file search and full-text content search (`Ctrl+k`)
 - **Journal mode** - Open or create today's dated note instantly (`t`)
+- **Frontmatter templates** - Add folder-specific metadata to new notes automatically
 - **Customizable themes** - TOML-based theming with a live theme selector (`Ctrl+t`)
 
 ## Quick Install
@@ -54,15 +59,20 @@ brew install ekphos
 
 ## Requirements
 
-- Rust 1.70+ (`rustup update` to upgrade)
-- For inline images: iTerm2, Kitty, WezTerm, Ghostty, or Sixel-compatible terminal
+- Rust 1.90+ (`rustup update` to upgrade)
+- For inline images and graphical equations: iTerm2, Kitty, WezTerm, Ghostty, or a Sixel-compatible terminal
 
 ## Get Started
 
 <Cards>
   <Card title="Getting Started" href="/docs/getting-started" description="Installation and first steps" />
+  <Card title="What's New" href="/docs/whats-new" description="Changes on main after version 0.25.10" />
   <Card title="Keybindings" href="/docs/keybindings" description="Complete keyboard reference" />
   <Card title="Journal" href="/docs/journal" description="Open today's note instantly" />
-  <Card title="Graph View" href="/docs/graph-view" description="Visualize note connections" />
+  <Card title="Graph View" href="/docs/graph-view" description="Explore Local and Global note connections" />
+  <Card title="Task Management" href="/docs/task-management" description="Filter and complete tasks across the vault" />
+  <Card title="Projects" href="/docs/projects" description="Build live views from note properties" />
+  <Card title="Canvas" href="/docs/canvas" description="Arrange and connect spatial notes" />
   <Card title="Configuration" href="/docs/configuration" description="Customize ekphos" />
+  <Card title="LaTeX Math" href="/docs/latex" description="Write and preview equations" />
 </Cards>

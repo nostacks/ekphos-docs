@@ -3,12 +3,17 @@
   "pages": [
     "index",
     "getting-started",
+    "whats-new",
     "keybindings",
     "journal",
     "search",
     "graph-view",
+    "task-management",
+    "projects",
+    "canvas",
     "configuration",
     "markdown",
+    "latex",
     "frontmatter",
     "themes"
   ]

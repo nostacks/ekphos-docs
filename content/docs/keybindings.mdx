@@ -5,7 +5,17 @@ description: Complete keyboard reference for ekphos
 
 import { Callout } from "fumadocs-ui/components/callout";
 
-Ekphos uses vim-style keybindings throughout. Press `?` to view the help dialog.
+Ekphos uses Vim-style navigation in the preview and offers both Standard and
+Vim editing. Press `?` in the preview or `F1` while editing to open the help
+dialog. The tables below show the default bindings.
+
+<Callout>
+  Main Normal-view commands and the shared editor shortcuts below can be
+  remapped, given secondary bindings, or disabled in the [`[keybindings]`
+  configuration table](/docs/configuration#keybindings). Other editor Vim
+  commands and controls inside dialogs, search inputs, and Graph View remain
+  fixed.
+</Callout>
 
 ## Global
 
@@ -20,15 +30,45 @@ Ekphos uses vim-style keybindings throughout. Press `?` to view the help dialog.
 | `q`                | Quit                                          |
 | `Ctrl+b`           | Toggle sidebar                                |
 | `Ctrl+o`           | Toggle outline                                |
+| `<`                | Shrink the focused sidebar or outline         |
+| `>`                | Grow the focused sidebar or outline           |
 | `Ctrl+k`           | Quick open (search files and content)         |
 | `t`                | Open today's journal                          |
-| `Ctrl+t`           | Open theme selector                           |
+| `Ctrl+t`           | Open theme and style selector                 |
 | `Ctrl+f`           | Find in buffer (search current note)          |
 | `Ctrl+g`           | Open graph view                               |
+| `Ctrl+y`           | Open task view                                |
 | `Ctrl+z`           | Toggle zen mode (hide both panels)            |
 | `Ctrl+m`           | Toggle frontmatter visibility (Content panel) |
+| `F6`               | Switch between Standard and Vim editing       |
 | `R`                | Reload files                                  |
 | `Ctrl+Shift+R`     | Reload config and theme                       |
+
+### Help Dialog
+
+The help dialog now lists every configurable app command alongside the controls
+for the active editing mode. Use these fixed keys to browse it:
+
+| Key                                      | Action                   |
+| ---------------------------------------- | ------------------------ |
+| `j` / `k` or `↑` / `↓`                   | Scroll one line          |
+| `Ctrl+d` / `Ctrl+u` or `PgDn` / `PgUp`   | Scroll one page          |
+| `g` / `G` or `Home` / `End`              | Jump to the start or end |
+| `Esc` / `Enter` / `q` / `?`              | Close help               |
+
+### Panel Sizing
+
+Panel resizing works in the preview when the sidebar or outline is focused. Each
+keypress changes only that panel by five percentage points, applies live, and is
+saved to `config.toml` for the next launch. Widths stop at `5%` and `95%`; the
+content panel retains a 20-column minimum on narrow terminals. Below `10%`, a
+side panel switches to its minimized five-column view; pressing `>` grows it
+back to the full view.
+
+If content is focused, zen mode is active, or the focused side panel is
+collapsed, Ekphos leaves the widths unchanged and shows a status message. See
+[Configuration](/docs/configuration#panel-sizing) for the corresponding
+settings and manual reload behavior.
 
 ### Navigation History
 
@@ -39,11 +79,95 @@ Navigate between previously visited notes, similar to browser back/forward:
 | `-` | Go back to previous note |
 | `=` | Go forward to next note  |
 
+These history shortcuts are unmodified keys. Terminal-level shortcuts such as
+`Ctrl+-` and `Ctrl++` are not captured by Ekphos.
+
 <Callout>
   Navigation history is recorded when you: - Click or press Enter on a note in
   the sidebar - Press `e` to edit a note - Follow a WikiLink - Open a note from
   the graph view
 </Callout>
+
+## Graph View
+
+Open a Local graph for the active note with `Ctrl+g` by default. See [Graph View](/docs/graph-view) for layout, rendering, and large-vault details.
+
+| Key                    | Action                                 |
+| ---------------------- | -------------------------------------- |
+| `h` / `j` / `k` / `l` | Focus nearest node by direction        |
+| Arrow keys             | Focus nearest node by direction        |
+| `Enter`                | Open the focused note                  |
+| `Space`                | Make focused node the Local root       |
+| `v` / `Tab`            | Switch Local/Global view               |
+| `[` / `]`              | Change Local depth from 1 to 5         |
+| `d`                    | Cycle all/incoming/outgoing links      |
+| `/`                    | Filter by title, path, or `#tag`       |
+| `n` / `N`              | Next/previous filter match             |
+| `o`                    | Toggle Global orphans                  |
+| `H` / `J` / `K` / `L` | Pan the viewport                       |
+| `+` / `=` / `-`        | Zoom within fit-all and `2.5×` limits  |
+| `f`                    | Fit the complete graph in the viewport |
+| `0`                    | Reset toward 100% within zoom limits   |
+| `g` / `G`              | Focus first/last node                  |
+| `u`                    | Clear node focus                       |
+| `Ctrl+h` / `Ctrl+j` / `Ctrl+k` / `Ctrl+l` | Move the focused node       |
+| `r`                    | Reset graph controls                   |
+| `?`                    | Show graph help                        |
+| `Esc` / `q`            | Close Graph View                       |
+
+## Task View
+
+Open the vault-wide task list with `Ctrl+y` by default. See [Task Management](/docs/task-management) for the task line syntax and details.
+
+| Key                          | Action                                        |
+| ---------------------------- | --------------------------------------------- |
+| `j` / `k` or arrow keys      | Move selection                                |
+| `J` / `K` or `PgDn` / `PgUp` | Move by one screen                            |
+| `g` / `G` or `Home` / `End`  | Jump to first/last task                       |
+| `f`                          | Cycle status: Open, Done, All                 |
+| `d`                          | Cycle due: any, overdue, today, this week     |
+| `p`                          | Cycle priority: any, high, medium, low        |
+| `/`                          | Search task text and note titles              |
+| `c`                          | Clear every filter                            |
+| `r`                          | Rescan the vault                              |
+| `Space` / `x`                | Toggle the selected task's checkbox           |
+| `Enter`                      | Open the source note at the task's line       |
+| `Esc` / `q`                  | Close the view (`Esc` clears search text first) |
+
+## Projects
+
+When a `.base` file has focus, these controls navigate its live result view.
+See [Projects](/docs/projects) for the file format and query features.
+
+| Key                    | Action                                  |
+| ---------------------- | --------------------------------------- |
+| `j` / `k` or `↑` / `↓` | Select the next or previous result      |
+| `PgDn` / `PgUp`        | Move ten results                        |
+| `Enter` / `Space` / `o` | Open the selected note                 |
+| `←` / `→`              | Show the previous or next column        |
+| `[` / `]`              | Switch between project views           |
+| `e`                    | Edit the `.base` source                 |
+
+## Canvas
+
+See [Canvas](/docs/canvas) for mouse controls, inline card editing, connection
+handles, and persistence details.
+
+| Key                                    | Action                                  |
+| -------------------------------------- | --------------------------------------- |
+| `h` / `j` / `k` / `l` or arrows       | Select the nearest card by direction    |
+| `Shift` + arrows                       | Pan the Canvas                          |
+| `Alt` + arrows                         | Move the selected card                  |
+| `Alt+Shift` + arrows                   | Resize the selected card                |
+| `+` / `=` / `-`                       | Zoom in or out                          |
+| `f`                                    | Fit all Canvas content                  |
+| `Enter` / `Space`                      | Open a file card or edit another card   |
+| `F6`                                   | Edit the selected text, link, or group  |
+| `c`                                    | Start a connection from the selected card |
+| `[` / `]`                              | Select the previous or next connection  |
+| `Delete` / `Backspace` / `x`           | Detach the selected connection          |
+| `Ctrl+z` / `Ctrl+Shift+z` / `Ctrl+y`   | Undo / redo Canvas changes              |
+| `e` / `E`                              | Edit the raw JSON source                |
 
 ## Sidebar
 
@@ -117,9 +241,9 @@ Press `s` to cycle through sorting options. The current mode is displayed in the
 | `Ctrl+d` / `Ctrl+u`   | Half page down/up                                 |
 | `gg`                  | Go to top                                         |
 | `G`                   | Go to bottom                                      |
-| `Space`               | Toggle task checkbox / Open link / Toggle details |
-| `]` / `[`             | Navigate between links (and task checkbox)        |
-| `Enter` / `o`         | Open image in viewer                              |
+| `Space`               | Toggle checkbox / Open selected target / Toggle details |
+| `]` / `[`             | Navigate links, inline images, and checkbox       |
+| `Enter` / `o`         | Open selected link or image                       |
 | `Shift+J` / `Shift+K` | Toggle floating cursor mode                       |
 
 <Callout>
@@ -152,23 +276,85 @@ When a heading is folded, all content until the next heading of equal or higher 
   a folded heading via the outline panel automatically unfolds it.
 </Callout>
 
-### Task Items with Links
+### Checkbox Items with Links
 
-When a task item contains links (wikilinks, markdown links, or images), you can navigate between the checkbox and links:
+When a checklist or managed task contains links, you can navigate between the
+checkbox and its wikilinks, Markdown links, or images:
 
 ```
 - [ ] Check [[Project Notes]]
-- [ ] Review [documentation](https://docs.example.com)
+- [ ] #task Review [documentation](https://docs.example.com)
 - [ ] See screenshot ![preview](image.png)
 ```
 
-- `]` / `[` cycles between the checkbox and any links in the task
-- When the **checkbox is selected** (highlighted), pressing `Space` toggles the task
+- `]` / `[` cycles between the checkbox, links, and each inline image in the item
+- When the **checkbox is selected** (highlighted), pressing `Space` toggles it
 - When a **link is selected**, pressing `Space` opens it (wikilink navigates, URL opens in browser, image opens in viewer)
 
-The currently selected element (checkbox or link) is highlighted with a yellow background.
+The currently selected checkbox or text link uses a yellow background. A selected
+inline image gets its own highlighted border and **Open ↗** title.
 
-## Edit Mode - Normal
+## Editing Modes
+
+New installations use Standard editing. Existing configurations without an
+explicit [`editor.mode`](/docs/configuration#editing-modes) keep Vim behavior
+for compatibility. Press `F6` in the preview or editor to switch immediately
+and save the preference.
+
+### Standard Editing
+
+Standard mode behaves like a conventional text editor: typing inserts text,
+arrow keys move the caret, and holding Shift extends the selection.
+
+| Key                                      | Action                                      |
+| ---------------------------------------- | ------------------------------------------- |
+| Arrow keys                               | Move the caret                              |
+| `Shift` + movement                       | Extend the selection                        |
+| `Ctrl+←` / `Ctrl+→` or `Alt+←` / `Alt+→` | Move by word                                |
+| `Home` / `End`                           | Move to the start or end of the line    |
+| `Ctrl+Home` / `Ctrl+End`                 | Move to the start or end of the document    |
+| `PgUp` / `PgDn`                          | Move one page                               |
+| `Ctrl+a`                                 | Select all                                  |
+| `Ctrl+c` / `Ctrl+x` / `Ctrl+v`           | Copy / cut / paste                          |
+| `Ctrl+z` / `Ctrl+y`                      | Undo / redo                                 |
+| `Ctrl+k`                                 | Cut the selection or current line           |
+| `Ctrl+u`                                 | Paste                                       |
+| `Ctrl+f` / `Ctrl+w`                      | Find in the note                            |
+| `Ctrl+s` / `Ctrl+o`                      | Save and keep editing                       |
+| `Esc`                                    | Return to preview; confirm first if unsaved |
+| `F1`                                     | Show help                                   |
+| `F6`                                     | Switch to Vim editing                       |
+
+Terminal emulators may reserve clipboard shortcuts. Terminal paste events and
+the editor's right-click context menu remain available when that happens.
+
+### Shared Editor Shortcuts
+
+These shortcuts work in Standard editing and in Vim Normal, Insert, and Replace
+modes:
+
+| Key      | Action                                                    |
+| -------- | --------------------------------------------------------- |
+| `Ctrl+l` | Make the current line a managed task                     |
+| `Tab`    | Toggle an H1-H3 fold; indent on any other line            |
+
+`Ctrl+l` works on plain, bulleted, and checklist lines. It adds the checkbox and
+`#task` marker as needed while keeping indentation and the existing `-`, `*`,
+or `+` list marker. It leaves existing managed tasks and unsupported Markdown
+blocks unchanged. The insertion is one undoable edit.
+
+Folding hides a heading's content without changing the note. A folded heading
+shows a non-editable `…` indicator, cursor movement skips its hidden rows, and a
+direct jump or search result automatically reveals its row. Nested folds remain
+folded when their parent is reopened. Pressing `Enter` at the end of a folded
+heading opens it and creates a line after its existing content; pressing it
+inside the heading text splits normally. Fold state lasts for the current
+editing session.
+
+In Vim Normal mode, `za` also toggles the current heading, `zM` folds every
+H1-H3 section, and `zR` unfolds every section.
+
+## Vim Mode - Normal
 
 ### Mode Changes
 
@@ -251,6 +437,7 @@ The currently selected element (checkbox or link) is highlighted with a yellow b
 | `Ctrl+u` / `Ctrl+d` | Half page up/down        |
 | `Ctrl+b` / `Ctrl+f` | Full page up/down        |
 | `zz` / `zt` / `zb`  | Center/top/bottom cursor |
+| `za` / `zM` / `zR`  | Toggle/fold all/unfold all headings |
 
 ### Macros
 
@@ -346,7 +533,7 @@ Press `:` to enter command mode.
 | `:{n}`          | Go to line n               |
 | `:%s/pat/rep/g` | Substitute all occurrences |
 
-## Edit Mode - Insert
+## Vim Mode - Insert
 
 | Key      | Action                         |
 | -------- | ------------------------------ |
@@ -367,7 +554,7 @@ When the autocomplete popup is open:
 | `Esc`           | Close                |
 | Type            | Filter suggestions   |
 
-## Edit Mode - Visual
+## Vim Mode - Visual
 
 Ekphos supports three visual selection modes, matching vim's behavior:
 
@@ -433,7 +620,7 @@ Example: Selecting a column with Ctrl+v
 | `Esc`     | Cancel selection      |
 | `Ctrl+s`  | Save and exit         |
 
-## Edit Mode - Replace
+## Vim Mode - Replace
 
 Press `R` in normal mode to enter Replace mode. Characters you type overwrite existing text instead of inserting.
 
@@ -543,7 +730,9 @@ Content search runs in the background to keep the UI responsive. A "Searching...
 
 ## Journal
 
-Press `t` to open today's journal note (`journal.<date>.md`), creating it from a dated template if it doesn't exist yet.
+Press `t` to open today's journal note
+(`Journal/<year>/journal.<date>.md` by default), creating it from a dated
+template if it does not exist yet.
 
 | Key | Action               |
 | --- | -------------------- |
@@ -559,8 +748,9 @@ Press `Ctrl+t` to open the theme selector. Moving the selection previews each th
 | ---------------------- | ------------------------------------- |
 | `↑` / `↓` or `k` / `j` | Move selection (live preview)         |
 | `Ctrl+n` / `Ctrl+p`    | Move selection (live preview)         |
-| `Enter`                | Apply and save the selected theme     |
-| `Esc`                  | Cancel and restore the previous theme |
+| `←` / `→` or `h` / `l` | Switch between outlined and flat      |
+| `Enter`                | Apply and save the theme and style    |
+| `Esc`                  | Cancel and restore both previous choices |
 
 The list shows official (bundled) themes first, then custom themes from `~/.config/ekphos/themes/`. See [Themes](/docs/themes) for details.
 

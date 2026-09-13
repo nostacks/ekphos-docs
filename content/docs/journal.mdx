@@ -5,16 +5,21 @@ description: Open or create today's daily note instantly
 
 import { Callout } from "fumadocs-ui/components/callout";
 
-Journal mode gives you a frictionless daily note. Press `t` in normal mode to jump straight into today's entry — ekphos opens it if it already exists, or creates it from a small dated template if it doesn't.
+Journal mode gives you a frictionless daily note. By default, press `t` in the
+main preview to jump straight into today's entry. Ekphos opens it if it already
+exists or creates it from a small dated template if it does not. The shortcut
+is configurable as [`open_journal`](/docs/configuration#keybindings).
 
 ## Usage
 
-Press `t` from anywhere in normal mode (the sidebar, content, or outline panel):
+Press `t` from any preview panel: sidebar, content, or outline.
 
 - If today's journal **already exists**, ekphos opens it.
 - If it **doesn't exist yet**, ekphos creates it and opens it.
 
-Either way you land in the note with the content panel focused, and a status message confirms what happened (`Created journal.2026-05-29.md` or `Opened journal.2026-05-29.md`).
+Either way you land in the note with the content panel focused, and a status
+message confirms what happened, such as
+`Created Journal/2026/journal.2026-05-29.md`.
 
 | Key | Action               |
 | --- | -------------------- |
@@ -27,13 +32,34 @@ Either way you land in the note with the content panel focused, and a status mes
 
 ## File Location and Naming
 
-Journal entries are plain markdown files created in your notes directory (`~/Documents/ekphos` by default), named after the current date:
+Journal entries are plain Markdown files under the `journal_dir` folder, grouped
+into year subfolders. With the default configuration, the pattern is:
 
-```
-journal.YYYY-MM-DD.md
+```text
+Journal/YYYY/journal.YYYY-MM-DD.md
 ```
 
-For example, on May 29 2026 the file is `journal.2026-05-29.md`. Because each day gets its own file, pressing `t` tomorrow starts a fresh entry while leaving today's untouched — and pressing `t` again later the same day simply reopens it.
+For example, on May 29, 2026, Ekphos uses
+`Journal/2026/journal.2026-05-29.md` inside your vault. Pressing `t` tomorrow
+creates a new entry, while pressing it again later the same day reopens the
+existing file.
+
+Set another vault-relative folder under `[general]` in `config.toml`:
+
+```toml title="config.toml"
+[general]
+journal_dir = "Personal/Daily Notes"
+```
+
+This example creates the 2026 entry at
+`Personal/Daily Notes/2026/journal.2026-05-29.md`. The folder must remain inside
+the vault; absolute paths and `.` or `..` path components are rejected.
+
+<Callout>
+  If a root-level `journal.YYYY-MM-DD.md` from an older Ekphos version already
+  exists for today, Ekphos opens it in place. It does not move or overwrite the
+  legacy file. When both locations exist, the configured journal folder wins.
+</Callout>
 
 <Callout>
   The date is your **local** date, so the entry rolls over at local midnight —
@@ -59,6 +85,12 @@ The `journal` tag groups every entry together when you browse or search by tag, 
 <Callout>
   Existing entries are never overwritten. Pressing `t` only writes the template
   when today's file doesn't exist yet.
+</Callout>
+
+<Callout>
+  Folder-based [frontmatter templates](/docs/frontmatter#frontmatter-templates)
+  do not apply to journal entries. Journals always use the dated template shown
+  above.
 </Callout>
 
 ## Next Steps

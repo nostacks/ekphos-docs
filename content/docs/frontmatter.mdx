@@ -1,6 +1,6 @@
 ---
 title: Frontmatter
-description: YAML frontmatter support for note metadata and tags
+description: YAML frontmatter, metadata, tags, and folder-aware templates
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
@@ -55,7 +55,9 @@ By default, the raw frontmatter YAML is hidden in the content view to keep your 
 
 ### Toggle Visibility
 
-Press `Ctrl+m` while in the Content panel to toggle frontmatter visibility:
+By default, press `Ctrl+m` while in the Content panel to toggle frontmatter
+visibility. The shortcut is configurable as
+[`toggle_frontmatter`](/docs/configuration#keybindings):
 
 - **Hidden (default)**: Only tag badges shown, frontmatter lines hidden
 - **Visible**: Full frontmatter displayed with syntax highlighting
@@ -74,6 +76,7 @@ In Edit mode, frontmatter is always visible as raw text for editing.
 Add these options to your `config.toml`:
 
 ```toml title="config.toml"
+[general]
 # Hide frontmatter in content view (default: true)
 frontmatter_hidden = true
 
@@ -111,6 +114,81 @@ tags:
   - cli
   - terminal
 ```
+
+## Frontmatter Templates
+
+Frontmatter templates add the same metadata to new notes automatically. Store
+each template as a YAML fragment in `~/.config/ekphos/templates/`. Ekphos
+creates this directory on startup. Leave out the `---` delimiters because
+Ekphos adds them when it creates the note.
+
+For example, create `~/.config/ekphos/templates/project.yaml`:
+
+```yaml title="project.yaml"
+title: "{{title}}"
+created: "{{date}}"
+folder: "{{folder}}"
+tags: [project]
+status: active
+```
+
+Then map vault folders to template files in `config.toml`:
+
+```toml title="config.toml"
+[frontmatter_templates]
+"." = "default.yaml"
+"Projects" = "project.yaml"
+"Projects/Clients" = "client.yaml"
+```
+
+Folder keys are case-sensitive, use `/` separators, and are relative to the
+vault. `.` represents the vault root. Template paths are relative to
+`~/.config/ekphos/templates/` and must stay inside that directory.
+
+Ekphos checks the note's destination folder first and then walks up through its
+parents. The closest mapping wins. In the example above:
+
+- A note in `Projects/Clients` uses `client.yaml`.
+- A note in `Projects/Research` inherits `project.yaml`.
+- A note outside `Projects` uses `default.yaml`.
+- Without a matching folder or root mapping, the note keeps its normal
+  heading-only content.
+
+### Template Variables
+
+Place variables inside quoted YAML string values:
+
+| Variable | Value |
+| --- | --- |
+| `{{title}}` | New note name |
+| `{{date}}` | Current local date in `YYYY-MM-DD` format |
+| `{{folder}}` | Vault-relative destination folder, or `.` for the vault root |
+
+Variables also work inside longer strings, such as
+`summary: "Project note: {{title}}"`. Static arrays, numbers, booleans, and
+custom properties remain valid YAML values.
+
+<Callout>
+  Ekphos parses and rewrites the YAML to keep generated frontmatter valid.
+  Comments and formatting from the template are not copied into the new note.
+</Callout>
+
+### When Templates Apply
+
+Templates apply to notes created from the New Note dialog and from missing
+wiki links. They do not change existing notes, and [journal notes](/docs/journal)
+keep their dedicated dated format.
+
+Template files are read for every new note, so file edits apply immediately.
+After changing `[frontmatter_templates]` in `config.toml`, press
+`Ctrl+Shift+R` to reload the mappings.
+
+<Callout type="warn">
+  If a mapped template is missing, unreadable, invalid YAML, uses the wrong type
+  for a supported field, or contains an unknown variable, Ekphos cancels note
+  creation and shows the error. Fix the template or mapping, then create the
+  note again.
+</Callout>
 
 ## Examples
 

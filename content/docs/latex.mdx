@@ -1,0 +1,92 @@
+---
+title: LaTeX Math
+description: Write and preview inline and display equations
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+Ekphos renders LaTeX equations directly in the content preview. Inline equations
+sit inside prose, while display equations get their own centered block.
+
+## Inline Equations
+
+Wrap an expression in single dollar signs:
+
+```markdown
+Einstein's mass-energy relation is $E = mc^2$.
+
+- Euler's identity is $e^{i\pi} + 1 = 0$.
+- [ ] Verify $\sum_{k=1}^{n} k = \frac{n(n+1)}{2}$.
+```
+
+Inline equations render in regular prose, lists, blockquotes, and tasks. They
+stay on one terminal row and participate in normal word wrapping, so text and
+links around an equation remain aligned and selectable.
+
+The first and last characters inside the delimiters cannot be whitespace. Write
+`$E = mc^2$`, not `$ E = mc^2 $`. Escaped dollar signs and expressions inside
+inline code remain literal text.
+
+## Display Equations
+
+Wrap a formula in double dollar signs to give it a dedicated block:
+
+```markdown
+$$
+\frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+$$
+```
+
+Single-line display equations work too:
+
+```markdown
+$$e^{i\pi} + 1 = 0$$
+```
+
+Display equations preserve their aspect ratio and shrink when the content
+panel is too narrow for the configured height.
+
+## Preview Behavior
+
+Equation rendering starts whenever a note enters the content preview. You do
+not need to focus the content panel or press another key. While a display
+equation is rendering, Ekphos reserves its configured space to keep nearby text
+from jumping.
+
+<Callout>
+  In edit mode, Ekphos keeps the LaTeX source visible and syntax-highlighted.
+  Return to the content preview to see the rendered equation.
+</Callout>
+
+## Display Height
+
+Set `latex_height` under `[general]` in `~/.config/ekphos/config.toml`. The value
+is the target height of a display-equation block in terminal rows:
+
+```toml title="config.toml"
+[general]
+latex_height = 8
+```
+
+The default is `8`. Values below `3` are treated as `3`, leaving room for the
+equation and its block spacing. Inline equations always use one terminal row
+and are not affected by `latex_height`.
+
+After editing the configuration, press `Ctrl+Shift+R` to apply the new height
+without restarting Ekphos. See the [configuration reference](/docs/configuration#latex-height)
+for the other preview settings.
+
+## Compatible Terminals
+
+Graphical equations require one of the image protocols supported by Ekphos:
+
+- iTerm2
+- Kitty
+- WezTerm
+- Ghostty
+- A Sixel-enabled terminal
+
+<Callout type="warn">
+  In a terminal without a supported image protocol, Ekphos keeps the LaTeX
+  source readable instead of leaving an empty preview.
+</Callout>

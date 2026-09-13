@@ -28,13 +28,28 @@ H1-H3 headings can be folded to collapse their content, creating a cleaner works
 - `▼` Expanded (children visible)
 - `▶` Folded (children hidden)
 
-**Keybindings in Content View**:
+**In Content View**:
 - `Space` or click to toggle fold on a heading
 - `za` vim-style toggle fold
 - `zM` fold all headings
 - `zR` unfold all headings
 
 When folded, all content until the next heading of equal or higher level is hidden.
+
+**While editing**:
+
+- Press `Tab` on an H1-H3 heading to toggle its section. On any other line,
+  `Tab` keeps its normal indentation behavior.
+- In Vim Normal mode, use `za` to toggle the current heading, `zM` to fold all
+  headings, or `zR` to unfold all headings.
+
+A folded heading shows a non-editable `…` indicator. Cursor movement skips
+hidden rows, while a direct jump or search result reveals the destination
+automatically. Reopening a parent preserves any nested folds. Pressing `Enter`
+at the end of a folded heading opens the section and creates a line after its
+existing content. Pressing it inside the heading text splits the heading
+normally. Editor folds last for the current editing session and do not modify
+the Markdown source.
 
 <Callout>
 Only H1-H3 appear in the outline panel for navigation and support folding.
@@ -49,6 +64,23 @@ Only H1-H3 appear in the outline panel for navigation and support folding.
 `inline code`
 > blockquote
 ```
+
+## LaTeX Math
+
+Use `$...$` for an equation inside prose and `$$...$$` for a centered display
+equation. Rendering starts automatically when the note enters the content
+preview, even when another panel has focus.
+
+```markdown
+The energy relation is $E = mc^2$.
+
+$$
+\int_{-\infty}^{\infty} e^{-x^2}\,dx = \sqrt{\pi}
+$$
+```
+
+Read the [LaTeX math guide](/docs/latex) for syntax rules, terminal support,
+fallback behavior, and display-height configuration.
 
 ## Lists
 
@@ -69,26 +101,46 @@ Only H1-H3 appear in the outline panel for navigation and support folding.
 3. Third item
 ```
 
-### Task Lists
+### Checklists and Tasks
 
 ```markdown
-- [ ] Unchecked task
-- [x] Completed task
-- [ ] Task with [[wiki link]]
-- [ ] Task with [markdown link](https://example.com)
-- [ ] Task with ![image](screenshot.png)
-- [ ] Task with !![text-only image](diagram.png)
+- [ ] Regular checklist item
+- [x] Completed checklist item
+- [ ] #task Managed task
+- [ ] #task Task with [[wiki link]]
+- [ ] #task Task with [markdown link](https://example.com)
+- [ ] #task Task with ![image](screenshot.png)
+- [ ] #task Task with !![text-only image](diagram.png)
 ```
 
-Tasks are interactive - press `Space` in content view to toggle the checkbox.
+All checkboxes are interactive: press `Space` in content view to toggle one.
+Plain checkboxes remain regular checklist items. A checkbox containing the
+standalone `#task` tag is a managed task that appears in Task View.
 
-**Tasks with links**: When a task contains links (wikilinks, markdown links, or images), use `]` / `[` to navigate between the checkbox and links. `Space` toggles the checkbox when it's selected, or opens the link when a link is selected.
+In edit mode, press `Ctrl+l` on a plain, unordered-list, or checklist line to
+make it a managed task. The shortcut adds the checkbox and `#task` marker as
+needed. Existing managed tasks remain unchanged, and the insertion is one
+undoable edit. See [Task Management](/docs/task-management#writing-tasks) for
+details.
+
+Managed tasks can carry due dates and priorities as emoji tokens on the same
+line. `Ctrl+y` gathers every `#task` checkbox in the vault into one filterable
+list. See [Task Management](/docs/task-management).
+
+**Checkboxes with links**: When a checklist or task contains links (wikilinks,
+markdown links, or images), use `]` / `[` to navigate between the checkbox and
+links. `Space` toggles the checkbox when it is selected, or opens the selected
+link.
 
 **Smart image rendering**:
-- **Standalone images** (`![](path)` on its own line): Render at full content width with border
-- **Inline images** (in lists, tasks, or with other text): Render as compact thumbnails below the text
+- **Standalone images** (`![](path)` on its own line): Render at full content width with a border and the configured height
+- **Inline images** (in lists, tasks, with other text, or multiple images on one line): Start on a dedicated row below the prose, flow horizontally as compact thumbnails, and wrap at the content boundary
 
-All images can be opened with `Space` or `Enter` when selected.
+Standalone images use `image_height` (default `8`), while inline thumbnails use
+`inline_image_height` (default `4`). See [Image Height](/docs/configuration#image-height).
+Use `]` / `[` to select each inline thumbnail individually; its border displays
+**Open ↗** when selected. Press `Space`, `Enter`, or `o` to open the selected
+image.
 
 ## Links
 
@@ -184,13 +236,31 @@ Tables render with proper borders and header styling.
 |-----------|---------|-------------|
 | Relative | `![](image.png)` | Resolved relative to the current note's directory |
 | Relative with ./ | `![](./assets/img.png)` | Explicit relative path |
+| Path with spaces | `![](<assets/My image.png>)` | CommonMark angle-bracket destination |
+| Percent-encoded path | `![](assets/My%20image.png)` | Decoded before local file lookup |
 | Home directory | `![](~/Pictures/photo.jpg)` | Expands `~` to user's home directory |
 | Absolute | `![](/Users/name/img.png)` | Full filesystem path |
 | Remote URL | `![](https://example.com/img.jpg)` | HTTP/HTTPS URLs |
 
 <Callout>
 Relative paths are resolved from the markdown file's location, not the current working directory.
+Remote URLs keep their percent encoding when Ekphos fetches or opens them.
 </Callout>
+
+External links and images open through the system handler on macOS, Windows,
+Linux, Android, and FreeBSD. Linux, Android, and FreeBSD use `xdg-open`.
+
+### Image Preview Height
+
+Set `image_height` for standalone previews and `inline_image_height` for inline
+thumbnails in your [configuration](/docs/configuration#image-height). Their
+defaults are `8` and `4`, respectively. Values below `3` are rendered as `3` so
+the preview borders cannot consume the entire image area.
+
+The inline-image group starts on a fresh row below any prose so previews never
+collide with text. Images on one Markdown source line remain in that horizontal
+flow until the content boundary forces a wrap. Put images on separate source
+lines when you want an intentional line break between groups.
 
 ### Compatible Terminals
 

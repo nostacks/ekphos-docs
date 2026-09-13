@@ -11,7 +11,9 @@ Search across all your notes by file name or content.
 
 ## Quick Open
 
-Press `Ctrl+k` to open the search picker. You can search by:
+By default, press `Ctrl+k` to open the search picker. The shortcut is
+configurable as [`open_quick_search`](/docs/configuration#keybindings). You can
+search by:
 
 - **Files** - Search note titles and paths
 - **Content** - Full-text search across all note content
@@ -63,7 +65,9 @@ The search index is stored in platform-specific cache directories:
   </Folder>
 </Files>
 
-Each notes directory gets its own cache folder identified by an 8-character hash of the directory path.
+Each vault gets its own cache folder identified by a 16-character hash of its
+normalized path. The same folder also holds the graph index and cached graph
+layout.
 
 ### Clearing the Cache
 
@@ -73,7 +77,9 @@ To rebuild the search index from scratch, use the `--clean-cache` command:
 ekphos --clean-cache
 ```
 
-This removes all cached search indexes. The index will be automatically rebuilt on next launch.
+This removes all Ekphos caches, including search and graph indexes, graph
+layouts, decoded images, and the last-opened-note record. Required caches are
+rebuilt automatically on the next launch.
 
 You can also manually delete the cache directory if needed:
 
@@ -97,7 +103,9 @@ Press `/` in the sidebar to filter notes by title. This is a quick filter that d
 
 ## Find in Buffer
 
-Press `Ctrl+f` to search within the current note (similar to vim's `/` search).
+By default, press `Ctrl+f` to search within the current note (similar to vim's
+`/` search). The shortcut is configurable as
+[`find_in_buffer`](/docs/configuration#keybindings).
 
 | Key      | Action              |
 | -------- | ------------------- |

@@ -1,0 +1,136 @@
+---
+title: Task Management
+description: Aggregate, filter, and complete managed tasks across your vault
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+Markdown checkboxes can be regular checklist items or managed tasks. Add the
+standalone `#task` tag to a checkbox when you want it to appear in **Task View**.
+Press `Ctrl+y` to open the view and filter managed tasks by status, due date,
+priority, or text. The shortcut is configurable as
+[`open_task_view`](/docs/configuration#keybindings).
+
+Both forms stay plain Markdown. The `#task` marker is also a regular inline tag,
+and the date and priority tokens use syntax that Obsidian's Tasks plugin can
+read and write.
+
+## Checklists and Tasks
+
+A plain checkbox is an interactive checklist item. You can toggle it in the
+content view, but it stays out of Task View and does not receive a completion
+date:
+
+```markdown
+- [ ] Pack a charger
+- [x] Confirm the packing list
+```
+
+## Writing Tasks
+
+A managed task combines a GFM checkbox with the `#task` tag. The tag can appear
+anywhere in the checkbox text and is case-insensitive:
+
+```markdown
+- [ ] #task Pay rent +home 📅 2026-06-01 ⏫
+- [x] Submit expense report #task ✅ 2026-05-30
+- [ ] #task Draft weekly review 🔼
+```
+
+`-`, `*`, and `+` list markers all work, and nested tasks are collected as their
+own rows. Longer tags such as `#tasks` and `#task/work` do not mark a task.
+Checkboxes inside fenced code blocks are ignored.
+
+While editing, press `Ctrl+l` to turn the current plain, unordered-list, or
+checklist line into a managed task. Ekphos adds `#task`, preserves an existing
+checkbox state, and keeps the line's indentation and list marker. Pressing the
+shortcut on an existing managed task leaves it unchanged, and the insertion can
+be undone in one step. Remap or disable the shortcut with
+[`insert_task`](/docs/configuration#command-reference).
+
+## Metadata Tokens
+
+Tokens live anywhere on the task line. Task View removes `#task` and the
+metadata tokens from the displayed text, then shows dates and priority in their
+own columns.
+
+| Token              | Meaning                      | Example         |
+| ------------------ | ---------------------------- | --------------- |
+| `📅 YYYY-MM-DD`    | Due date                     | `📅 2026-06-01` |
+| `🛫 YYYY-MM-DD`    | Start date                   | `🛫 2026-05-01` |
+| `✅ YYYY-MM-DD`    | Completion date              | `✅ 2026-05-30` |
+| `⏫` / `🔼` / `🔽` | High / medium / low priority | `⏫`            |
+
+<Callout>
+  Completing a task stamps a `✅` completion date automatically, whether you
+  toggle it in a note (press `Space` on the checkbox) or in the Task View.
+  Reopening a task removes the stamp again. Toggling a plain checklist only
+  changes its checkbox state.
+</Callout>
+
+## The Task View
+
+The view fills the screen. The title shows how many tasks are open and how many exist in total, plus a scanning indicator while the vault is being read.
+
+The header row holds four **filter chips**: status, due, priority, and search. Each chip shows the key that cycles it, and a chip that differs from its default is highlighted so you can see at a glance why a task is hidden. Chips are clickable.
+
+Each row shows, from left to right:
+
+- The checkbox, cyan when open and green when done
+- The task text, with metadata tokens removed
+- The priority badge
+- The due date, red when overdue and amber when due today. Completed tasks show their `✅` completion date here instead.
+- The source note title
+
+The selected row is highlighted across its full width. Columns on the right drop away one at a time as the terminal gets narrower, so the task text always keeps a readable minimum. A scrollbar appears when the list is longer than the screen, and the footer shows the selected position as `n/total`.
+
+### Navigation
+
+| Key                     | Action                          |
+| ----------------------- | ------------------------------- |
+| `j` / `k` or arrow keys | Move the selection              |
+| `J` / `K` or `PgDn` / `PgUp` | Move by one screen         |
+| `g` / `G` or `Home` / `End` | Jump to the first or last task |
+| `Space` / `x`           | Toggle the selected task        |
+| `Enter`                 | Open the source note at the task's line |
+| `r`                     | Rescan the vault                |
+| `Esc` / `q`             | Close the view (`Esc` first clears the search text if any) |
+
+### Filters
+
+| Key   | Action                                                   |
+| ----- | -------------------------------------------------------- |
+| `f`   | Cycle status: Open, Done, All                            |
+| `d`   | Cycle due: any, overdue, today, this week                |
+| `p`   | Cycle priority: any, high, medium, low                   |
+| `/`   | Search task text and note titles as you type             |
+| `c`   | Clear every filter and the search text                   |
+
+While the search box is active, `Enter` or `Esc` leaves it with the text kept, `Backspace` edits it, and `Ctrl+u` clears it. The list filters live on every keystroke.
+
+When nothing matches, the view says so and reminds you that `c` clears the filters. When the vault has no tasks at all, it shows the `- [ ] #task` syntax.
+
+### Mouse
+
+| Action          | Result                            |
+| --------------- | --------------------------------- |
+| Click a chip    | Cycle that filter, or focus search |
+| Click a row     | Select the task                   |
+| Click the checkbox | Toggle the task                |
+| Scroll over the list | Move the selection           |
+
+## Sorting
+
+Tasks are ordered open before done, then by due date (undated last), then by priority (unprioritized last), then by file order, so the most urgent work is at the top.
+
+## Keeping in Sync
+
+The vault is rescanned in the background whenever a note changes while the Task View is open, so external edits, file reloads, and toggles made elsewhere are picked up automatically. Press `r` to force a rescan.
+
+Toggling a task writes an atomic update to the source note, exactly like editing it by hand. Before writing, Ekphos checks that the line still holds the same task it scanned. If the note was edited in the meantime and the task moved, nothing is written, a toast explains why, and the list refreshes.
+
+<Callout>
+  Because tasks are ordinary Markdown lines, they work everywhere your notes
+  do: grep, scripts, sync clients, and other editors. Ekphos adds the
+  aggregation and filter layer on top.
+</Callout>

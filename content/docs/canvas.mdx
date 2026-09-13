@@ -1,0 +1,127 @@
+---
+title: Canvas
+description: Arrange, connect, resize, and edit notes with JSON Canvas files
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+Canvas provides a spatial workspace for notes, text, links, and groups. Ekphos
+reads and writes the JSON Canvas 1.0 format used by `.canvas` files, including
+standard colors, card dimensions, connection endpoints, labels, and extension
+fields.
+
+## Supported content
+
+| Card type | Canvas content                               |
+| --------- | -------------------------------------------- |
+| Text      | Markdown text stored directly in the Canvas |
+| File      | A Markdown or supported vault file          |
+| Link      | An external URL                             |
+| Group     | A labeled region behind related cards       |
+
+Connections attach to the top, right, bottom, or left side of a card. Their
+paths stay behind opaque cards, and selected or related connections are
+highlighted without changing the stored Canvas data.
+
+## Select, move, and explore
+
+| Key or action                       | Result                               |
+| ----------------------------------- | ------------------------------------ |
+| Click a card                        | Select the card                      |
+| Drag a card                         | Move and save the card               |
+| Drag empty space                    | Pan the Canvas                       |
+| Scroll outside the active editor    | Zoom around the pointer              |
+| `h` / `j` / `k` / `l` or arrows    | Select the nearest card by direction |
+| `Shift` + arrows                    | Pan the Canvas                       |
+| `Alt` + arrows                      | Move the selected card               |
+| `+` / `=` / `-`                    | Zoom in or out                       |
+| `f`                                 | Fit all Canvas content               |
+
+## Resize cards and groups
+
+Select a card or group to reveal a `◇` handle at each corner. Drag a corner or
+any border to resize it. Connected lines follow the border while you drag.
+
+| Resize control                  | Result                                        |
+| ------------------------------- | --------------------------------------------- |
+| Drag a border                   | Resize from that edge                         |
+| Drag a `◇` corner               | Resize width and height together              |
+| `Shift` + drag                  | Keep the original aspect ratio                |
+| `Alt+Shift` + left/right arrow  | Decrease or increase the width                |
+| `Alt+Shift` + up/down arrow     | Decrease or increase the height               |
+| `Esc` while dragging            | Restore the size from before the drag         |
+
+The new dimensions are saved when you release the pointer. Resizing while
+editing keeps the current draft open and reflows it to the new width.
+
+## Edit card content
+
+Double-click a text, link, or group card to edit it inside the card. You can
+also select it and press `Enter`, `Space`, or `F6`. The highlighted border,
+editing title, and terminal caret identify the active editor.
+
+Text cards keep their stored size while you type. Long text wraps inside the
+card, and the editor follows the caret when it moves beyond the visible area.
+`▲` and `▼` indicate hidden rows above or below. Long links and group names use
+`◀` and `▶` to indicate hidden text on either side.
+
+| Editing control              | Result                                        |
+| ---------------------------- | --------------------------------------------- |
+| Type or paste                | Insert content at the caret                   |
+| Click text                   | Move the caret to that position               |
+| Left/right arrow             | Move by one displayed character               |
+| Up/down arrow                | Move between visible wrapped rows             |
+| `Home` / `End`               | Move to the start or end of the visible row   |
+| `Ctrl+Home` / `Ctrl+End`     | Move to the start or end of the card content  |
+| `PageUp` / `PageDown`        | Move by one visible editor page               |
+| Scroll over a text editor    | Review hidden rows inside the card            |
+| `Enter`                      | Add a line break in a text card               |
+| `Ctrl+Enter` or `Ctrl+S`     | Save a text card                              |
+| `Enter`                      | Save a link or group name                     |
+| Click outside the card       | Save the edit                                 |
+| `Esc`                        | Cancel without changing the Canvas            |
+
+Activating a file card opens the linked file. Using the edit command on a file
+card opens that Markdown file directly in the editor, instead of showing the
+Canvas JSON.
+
+<Callout>
+  Press `e` or uppercase `E` when you intentionally need the complete JSON
+  source. Raw source editing remains available for adding cards or changing
+  fields that do not yet have a visual control.
+</Callout>
+
+## Attach and detach connections
+
+Select a card to reveal one `●` connection handle on each side. The `◇` corner
+handles resize the card; the `●` side handles create connections. Drag a `●`
+handle to another card to create a connection. The connection and its endpoint
+sides are saved immediately.
+
+For keyboard-only connection editing:
+
+1. Select the source card.
+2. Press `c`.
+3. Use arrows or `h` / `j` / `k` / `l` to select the target.
+4. Press `Enter` to attach, or `Esc` to cancel.
+
+Click a connection to select it, or use `[` and `]` to cycle through
+connections. Press `Delete`, `Backspace`, or `x` to detach the selected
+connection.
+
+## Open card targets
+
+Press `o` to open the selected file or link. File paths are resolved inside the
+vault; a file card cannot use `..` or another path to escape the vault. External
+links use the configured system opener.
+
+## Saving and compatibility
+
+Moving or resizing cards, editing content, attaching connections, and
+detaching connections are saved atomically. `Ctrl+Z` undoes a Canvas change;
+`Ctrl+Shift+Z` or `Ctrl+Y` redoes it. Ekphos preserves unknown root, card, and
+connection fields when it rewrites a Canvas, which keeps vendor extensions
+available for other JSON Canvas applications.
+
+If a Canvas cannot be parsed, Ekphos shows the source location and leaves the
+file untouched. Press `E` to repair the JSON source.
