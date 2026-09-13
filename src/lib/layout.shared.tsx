@@ -12,7 +12,7 @@ export async function baseOptions(): Promise<BaseLayoutProps> {
           <Logo className="size-3.5 text-fd-primary" />
           <span className="font-medium">ekphos</span>
           {version ? (
-            <span className="border border-fd-border px-1.5 py-0.5 text-xs text-fd-muted-foreground">
+            <span className="bg-fd-muted px-1.5 py-0.5 text-xs text-fd-muted-foreground">
               {version}
             </span>
           ) : null}

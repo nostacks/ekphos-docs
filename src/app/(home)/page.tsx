@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Chip } from "@/components/chip";
 import { Features } from "@/components/features";
 import { Install } from "@/components/install";
+import { GitHubMark } from "@/components/logo";
 import { getRepoInfo, GITHUB_URL } from "@/lib/github";
 
 const SITE = "https://ekphos.nostacks.xyz";
@@ -40,7 +41,10 @@ export default async function HomePage() {
       <p className="mt-8 max-w-[60ch] leading-relaxed">{DESCRIPTION}</p>
       <ul className="mt-4 flex flex-wrap gap-2">
         <li>
-          <Chip href={GITHUB_URL}>Source</Chip>
+          <Chip href={GITHUB_URL}>
+            <GitHubMark className="size-3" />
+            Source
+          </Chip>
         </li>
         <li>
           <Chip href="/docs">Docs</Chip>

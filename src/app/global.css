@@ -6,7 +6,30 @@
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
+/*
+  Flat, borderless, square.
+
+  Separation is a surface step, never a line: canvas -> inset (wells, code,
+  inputs) -> panel (chrome, cards, callouts) -> hover (raised, interactive).
+  Ink carries the rest of the hierarchy. Radii collapse to zero everywhere, so
+  every `rounded-*` utility in the app and in fumadocs-ui resolves to a square.
+
+  One hue: the ekphos mark, #7aa2f7 (oklch 0.719 0.132 264). Neutrals are tinted
+  a few thousandths toward that hue so the grays sit in the same family as the
+  blue instead of reading as a separate, cold green-cast gray.
+*/
 @theme {
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
+  --radius: 0px;
+
+  /* landing palette: fixed dark, unchanged by the docs pass */
   --color-bg: #121212;
   --color-term: #0e0e0e;
   --color-text: #ededed;
@@ -28,100 +51,96 @@
 }
 
 :root {
-  --background: 250 250 250;
-  --foreground: 24 24 24;
-  --muted: 240 240 240;
-  --muted-foreground: 100 100 100;
-  --popover: 255 255 255;
-  --popover-foreground: 24 24 24;
-  --card: 255 255 255;
-  --card-foreground: 24 24 24;
-  --border: 228 228 228;
-  --input: 228 228 228;
-  --primary: 79 121 205;
-  --primary-foreground: 255 255 255;
-  --secondary: 245 245 245;
-  --secondary-foreground: 24 24 24;
-  --accent: 79 121 205;
-  --accent-foreground: 255 255 255;
-  --ring: 79 121 205;
-
-  --fd-background: 250 250 250;
-  --fd-foreground: 24 24 24;
-  --fd-card: 255 255 255;
-  --fd-card-foreground: 24 24 24;
-  --fd-secondary: 245 245 245;
-  --fd-secondary-foreground: 24 24 24;
-  --fd-muted: 240 240 240;
-  --fd-muted-foreground: 100 100 100;
-  --fd-border: 228 228 228;
-  --fd-primary: 79 121 205;
-  --fd-primary-foreground: 255 255 255;
-  --fd-accent: 245 245 245;
-  --fd-accent-foreground: 24 24 24;
-  --fd-ring: 79 121 205;
-
-  --code-bg: 245 245 245;
-  --code-inline-bg: 240 240 240;
-  --code-inline-color: 64 128 64;
-  --sidebar-bg: 250 250 250;
-  --nav-bg: 250 250 250;
-  --nav-bg-alpha: rgba(250, 250, 250, 0.9);
-}
-
-.dark {
-  --background: 18 18 18;
-  --foreground: 237 237 237;
-  --muted: 47 47 47;
-  --muted-foreground: 138 138 138;
-  --popover: 14 14 14;
-  --popover-foreground: 237 237 237;
-  --card: 14 14 14;
-  --card-foreground: 237 237 237;
-  --border: 47 47 47;
-  --input: 47 47 47;
-  --primary: 122 162 247;
-  --primary-foreground: 18 18 18;
-  --secondary: 14 14 14;
-  --secondary-foreground: 237 237 237;
-  --accent: 122 162 247;
-  --accent-foreground: 18 18 18;
-  --ring: 122 162 247;
-
-  --fd-background: 18 18 18;
-  --fd-foreground: 237 237 237;
-  --fd-card: 14 14 14;
-  --fd-card-foreground: 237 237 237;
-  --fd-secondary: 14 14 14;
-  --fd-secondary-foreground: 237 237 237;
-  --fd-muted: 47 47 47;
-  --fd-muted-foreground: 138 138 138;
-  --fd-border: 47 47 47;
-  --fd-primary: 122 162 247;
-  --fd-primary-foreground: 18 18 18;
-  --fd-accent: 30 30 30;
-  --fd-accent-foreground: 237 237 237;
-  --fd-ring: 122 162 247;
-
-  --code-bg: 14 14 14;
-  --code-inline-bg: 30 30 30;
-  --code-inline-color: 158 206 106;
-  --sidebar-bg: 18 18 18;
-  --nav-bg: 18 18 18;
-  --nav-bg-alpha: rgba(18, 18, 18, 0.9);
-}
-
-:root {
   color-scheme: light;
+
+  --surface-canvas: #fbfcfd;
+  --surface-inset: #eaedf2;
+  --surface-panel: #f3f4f8;
+  --surface-raised: #ffffff;
+  --surface-hover: #e1e6ef;
+  --surface-chip: #e5edfc;
+
+  --ink-strong: #141923;
+  --ink: #282e39;
+  --ink-muted: #616875;
+  --ink-faint: #6e7581;
+  --code-ink: #2855ad;
+
+  --accent: #3d6ad6;
+  --accent-ink: #ffffff;
+
+  /* accents are the only borders in the docs: they mark a boundary, they never
+     draw a box around chrome */
+  --rule-accent: color-mix(in oklab, var(--accent) 16%, transparent);
+  --rule-accent-strong: color-mix(in oklab, var(--accent) 30%, transparent);
+
+  --color-fd-background: var(--surface-canvas);
+  --color-fd-foreground: var(--ink);
+  --color-fd-muted: var(--surface-inset);
+  --color-fd-muted-foreground: var(--ink-muted);
+  --color-fd-popover: var(--surface-raised);
+  --color-fd-popover-foreground: var(--ink-strong);
+  --color-fd-card: var(--surface-panel);
+  --color-fd-card-foreground: var(--ink-strong);
+  --color-fd-secondary: var(--surface-panel);
+  --color-fd-secondary-foreground: var(--ink-strong);
+  --color-fd-accent: var(--surface-hover);
+  --color-fd-accent-foreground: var(--ink-strong);
+  --color-fd-primary: var(--accent);
+  --color-fd-primary-foreground: var(--accent-ink);
+  --color-fd-ring: var(--accent);
+  --color-fd-border: transparent;
+  --color-fd-overlay: rgb(20 25 35 / 0.28);
+
+  /* the only semantic hue that borrows the brand: "info" is ekphos blue */
+  --color-fd-info: var(--accent);
+  --color-fd-warning: oklch(72% 0.16 62);
+  --color-fd-error: oklch(60% 0.2 25);
+  --color-fd-success: oklch(62% 0.15 150);
+
+  --code-bg: var(--surface-inset);
+  --code-inline-bg: var(--surface-chip);
+  --code-inline-color: var(--code-ink);
 }
 
 .dark {
   color-scheme: dark;
+
+  --surface-canvas: #111215;
+  --surface-inset: #0a0c0f;
+  --surface-panel: #181a1f;
+  --surface-raised: #1d2129;
+  --surface-hover: #21252b;
+  --surface-chip: #1d2129;
+
+  --ink-strong: #eceef3;
+  --ink: #d6d9e0;
+  --ink-muted: #9a9fa8;
+  --ink-faint: #7c8089;
+  --code-ink: #b7d1f9;
+
+  --accent: #7aa2f7;
+  --accent-ink: #101318;
+
+  --rule-accent: color-mix(in oklab, var(--accent) 22%, transparent);
+  --rule-accent-strong: color-mix(in oklab, var(--accent) 38%, transparent);
+
+  --color-fd-overlay: rgb(6 8 12 / 0.62);
+  --color-fd-warning: oklch(76% 0.15 70);
+  --color-fd-error: oklch(70% 0.17 22);
+  --color-fd-success: oklch(78% 0.14 152);
+}
+
+/* fumadocs scopes its own grays inside the sidebar; keep them on the ladder */
+.dark #nd-sidebar {
+  --color-fd-muted: var(--surface-inset);
+  --color-fd-secondary: var(--surface-panel);
+  --color-fd-muted-foreground: var(--ink-muted);
 }
 
 body {
-  background: rgb(var(--background));
-  color: rgb(var(--foreground));
+  background: var(--color-fd-background);
+  color: var(--color-fd-foreground);
   font-synthesis: none;
   font-variant-ligatures: none;
   -webkit-font-smoothing: antialiased;
@@ -158,25 +177,28 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* ---------------------------------------------------------------- code ---- */
+
 figure.shiki,
-figure[class*="shiki"],
-figure:has(pre) {
-  background: rgb(var(--code-bg)) !important;
-  border-color: rgb(var(--border)) !important;
+figure[class*='shiki'] {
+  background: var(--surface-inset) !important;
+  border: 1px solid var(--rule-accent) !important;
   box-shadow: none !important;
+}
+
+/* the file name bar is a panel step above the code well, not a bordered header */
+figure.shiki > div:first-child,
+figure[class*='shiki'] > div:first-child {
+  background: var(--surface-panel) !important;
+  border-bottom: 0 !important;
 }
 
 figure.shiki pre,
-figure[class*="shiki"] pre,
-figure pre {
+figure[class*='shiki'] pre,
+.prose pre {
   background: transparent !important;
-  border: none !important;
+  border: 0 !important;
   margin: 0 !important;
-  box-shadow: none !important;
-}
-
-pre {
-  background: rgb(var(--code-bg)) !important;
   box-shadow: none !important;
 }
 
@@ -186,56 +208,192 @@ pre code span {
   font-family: var(--font-mono);
 }
 
+.prose code {
+  border-radius: 0 !important;
+}
+
 .prose :not(pre) > code {
-  background: rgb(var(--code-inline-bg)) !important;
-  color: rgb(var(--code-inline-color)) !important;
+  background: var(--code-inline-bg) !important;
+  color: var(--code-inline-color) !important;
   padding: 0.15rem 0.4rem !important;
-  border-radius: 0.25rem !important;
   font-size: 0.875em !important;
   font-family: var(--font-mono) !important;
-  border: none !important;
+  border: 0 !important;
 }
+
+/* --------------------------------------------------------------- prose ---- */
+
+.prose a {
+  color: var(--color-fd-primary);
+  text-decoration-color: color-mix(in oklab, var(--color-fd-primary) 35%, transparent);
+}
+
+.prose a:hover {
+  text-decoration-color: currentColor;
+}
+
+/* heading anchors are navigation targets, not links: keep them in ink */
+.prose :is(h1, h2, h3, h4, h5, h6) a {
+  color: inherit;
+  text-decoration-color: transparent;
+}
+
+.prose :is(h1, h2, h3, h4, h5, h6) a:hover {
+  text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
+}
+
+/* a rule is a rhythm mark here, drawn as a tinted hairline instead of a border */
+.prose hr {
+  border: 0;
+  height: 1px;
+  background: var(--rule-accent);
+  margin-block: 2.5rem;
+}
+
+.prose blockquote {
+  border: 0;
+  background: var(--surface-panel);
+  padding: 0.5rem 1rem;
+  color: var(--ink-muted);
+  font-style: normal;
+}
+
+/* tables hold together on row tint and a header step, with no grid lines */
+.prose table,
+.prose thead,
+.prose tbody,
+.prose tr,
+.prose th,
+.prose td {
+  border-color: transparent !important;
+}
+
+.prose thead th {
+  background: var(--surface-panel) !important;
+  color: var(--ink-strong) !important;
+  font-weight: 500;
+  border-bottom: 1px solid var(--rule-accent-strong) !important;
+}
+
+.prose tbody tr:nth-child(even) {
+  background: color-mix(in oklab, var(--surface-inset) 55%, transparent);
+}
+
+/* ----------------------------------------------------------- docs shell ---- */
 
 [data-sidebar] {
-  background: rgb(var(--sidebar-bg)) !important;
-  border-color: rgb(var(--border)) !important;
+  background: var(--surface-panel) !important;
+  border-color: transparent !important;
 }
 
-nav {
-  background: var(--nav-bg-alpha) !important;
-  backdrop-filter: blur(12px);
-  border-color: rgb(var(--border)) !important;
+#nd-sidebar {
+  border-inline-end: 0 !important;
 }
 
-.fd-card, [data-card] {
-  background: rgb(var(--card)) !important;
-  border-color: rgb(var(--border)) !important;
+#nd-subnav {
+  background: var(--surface-panel) !important;
+  border-bottom: 0 !important;
 }
 
-a:not([class]) {
-  color: rgb(var(--primary));
+/* the search field is a well inside the sidebar panel */
+[data-search-full] {
+  background: var(--surface-inset) !important;
+  border-color: transparent !important;
 }
 
-a:not([class]):hover {
-  color: rgb(var(--accent));
+[data-search-full]:hover {
+  background: var(--surface-hover) !important;
 }
 
-table {
-  border-color: rgb(var(--border)) !important;
+.fd-card,
+[data-card]:not(a) {
+  background: var(--surface-panel) !important;
+  border: 1px solid var(--rule-accent) !important;
+  box-shadow: none !important;
 }
 
-th {
-  background: rgb(var(--code-bg)) !important;
-  border-color: rgb(var(--border)) !important;
+[data-toc] a {
+  color: var(--ink-faint);
 }
 
-td {
-  border-color: rgb(var(--border)) !important;
+[data-toc] a:hover,
+[data-toc] a[data-active] {
+  color: var(--color-fd-primary);
+}
+
+/* callouts are a tint of their own signal colour inside an accent hairline,
+   with no stripe on the leading edge */
+.fd-callout {
+  background: color-mix(
+    in oklab,
+    var(--callout-color, var(--surface-panel)) 8%,
+    var(--surface-panel)
+  ) !important;
+  border: 1px solid
+    color-mix(in oklab, var(--callout-color, var(--accent)) 34%, transparent) !important;
+  box-shadow: none !important;
+  padding: 0.875rem 1rem !important;
+  color: var(--ink) !important;
+}
+
+.fd-callout > [role='none'] {
+  display: none;
+}
+
+.fd-callout svg {
+  color: var(--callout-color, var(--ink-muted));
+}
+
+.fd-callout [class*='font-medium'] {
+  color: var(--ink-strong);
+}
+
+/* docs-only: the landing's own controls keep their own borders and ink */
+#nd-docs-layout [role='tablist'] {
+  border-color: transparent !important;
+}
+
+/* the steps list keeps fumadocs' own gutter: the numbered markers live in it,
+   and the sequence does not need a panel painted behind it */
+.fd-step::before {
+  background: var(--surface-hover) !important;
+  color: var(--color-fd-primary) !important;
+  border-radius: 0 !important;
+  border: 1px solid var(--rule-accent) !important;
+}
+
+.fd-files {
+  background: var(--surface-panel) !important;
+  border: 1px solid var(--rule-accent) !important;
+}
+
+[data-dialog],
+[data-popover] {
+  border-color: transparent !important;
+}
+
+/* prev/next pagination reads as two blocks on a panel step, not two frames */
+#nd-page a[class*='col-span-full'] {
+  background: var(--surface-panel);
+  border: 1px solid var(--rule-accent);
+}
+
+#nd-page a[class*='col-span-full']:hover {
+  background: var(--surface-hover);
+}
+
+#nd-docs-layout button[aria-label*='Copy'] {
+  color: var(--ink-muted) !important;
+}
+
+#nd-docs-layout button[aria-label*='Copy']:hover {
+  background: var(--surface-hover) !important;
+  color: var(--ink-strong) !important;
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -243,59 +401,13 @@ td {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgb(var(--border));
-  border-radius: 3px;
+  background: var(--surface-hover);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(var(--muted-foreground));
+  background: var(--ink-faint);
 }
 
-[data-dialog] {
-  background: rgb(var(--card)) !important;
-  border-color: rgb(var(--border)) !important;
-}
-
-[data-toc] a {
-  color: rgb(var(--muted-foreground));
-}
-
-[data-toc] a:hover,
-[data-toc] a[data-active] {
-  color: rgb(var(--primary));
-}
-
-.fd-callout {
-  background: rgb(var(--card)) !important;
-  border-color: rgb(var(--border)) !important;
-}
-
-[role="tablist"] {
-  border-color: rgb(var(--border)) !important;
-}
-
-[role="tab"][data-state="active"] {
-  color: rgb(var(--primary)) !important;
-  border-color: rgb(var(--primary)) !important;
-}
-
-.fd-steps {
-  border-color: rgb(var(--border)) !important;
-}
-
-.fd-step::before {
-  background: rgb(var(--primary)) !important;
-}
-
-.fd-files {
-  background: rgb(var(--card)) !important;
-  border-color: rgb(var(--border)) !important;
-}
-
-button[aria-label*="Copy"] {
-  color: rgb(var(--muted-foreground)) !important;
-}
-
-button[aria-label*="Copy"]:hover {
-  color: rgb(var(--primary)) !important;
+* {
+  scrollbar-color: var(--surface-hover) transparent;
 }
