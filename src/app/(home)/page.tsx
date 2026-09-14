@@ -49,14 +49,6 @@ export default async function HomePage() {
         <li>
           <Chip href="/docs">Docs</Chip>
         </li>
-        <li>
-          <Chip href="https://crates.io/crates/ekphos">crates.io</Chip>
-        </li>
-        {version ? (
-          <li>
-            <Chip href={`${GITHUB_URL}/releases/latest`}>{version}</Chip>
-          </li>
-        ) : null}
       </ul>
 
       <section className="mt-10">
